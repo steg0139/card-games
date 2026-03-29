@@ -398,7 +398,10 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
   flex-direction: column;
   gap: 6px;
   box-shadow: var(--shadow);
+  cursor: pointer;
 }
+.history-card:hover { border-color: var(--primary); }
+.history-teams { display: flex; flex-direction: column; gap: 2px; font-size: 0.82rem; }
 .delete-btn {
   font-size: 1rem;
   color: var(--muted);
@@ -409,3 +412,32 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .history-card-header { display: flex; justify-content: space-between; align-items: center; }
 .history-scores { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.9rem; }
 .history-scores .winner { color: var(--primary); font-weight: 600; }
+
+/* ── Game Detail ── */
+.detail-header { display: flex; justify-content: space-between; align-items: baseline; }
+.detail-section { display: flex; flex-direction: column; gap: 8px; }
+.detail-section h3 { font-size: 0.9rem; color: var(--muted); }
+
+.teams-list { display: flex; flex-direction: column; gap: 6px; }
+.team-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.standings-list { display: flex; flex-direction: column; gap: 6px; }
+.standing-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.standing-rank { font-size: 1.1rem; width: 28px; }
+.standing-name { flex: 1; }

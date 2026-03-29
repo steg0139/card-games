@@ -45,7 +45,7 @@ export default function GameSetup() {
           id: generateId(),
           name: name.trim(),
           playerIds: players
-            .filter(p => teamAssignments[p.id] === String(i))
+            .filter((_, playerIndex) => teamAssignments[String(playerIndex)] === String(i))
             .map(p => p.id)
         }))
       : []

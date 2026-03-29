@@ -49,7 +49,10 @@ export default function GamePlay() {
       ) : (
         <RoundEntry
           game={game}
-          onSave={() => setEnteringRound(false)}
+          onSave={(updatedGame) => {
+            if (updatedGame?.endedAt) navigate('/results')
+            else setEnteringRound(false)
+          }}
           onCancel={() => setEnteringRound(false)}
           onComplete={isSingleRound ? handleComplete : undefined}
         />

@@ -5,6 +5,7 @@ import GameSetup from '@/pages/GameSetup'
 import GamePlay from '@/pages/GamePlay'
 import Results from '@/pages/Results'
 import History from '@/pages/History'
+import GameDetail from '@/pages/GameDetail'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <Route path="/game" element={<GamePlay />} />
       <Route path="/results" element={<Results />} />
       <Route path="/history" element={<History />} />
+      <Route path="/history/:gameId" element={<GameDetail />} />
     </Routes>
   )
 }

@@ -9,7 +9,7 @@ import TheGameRoundEntry from './rounds/TheGameRoundEntry'
 
 interface Props {
   game: Game
-  onSave: () => void
+  onSave: (updatedGame: Game) => void
   onCancel: () => void
   onComplete?: (updatedGame: Game) => void
 }
@@ -19,7 +19,7 @@ export default function RoundEntry({ game, onSave, onCancel, onComplete }: Props
 
   const handleSave = (scores: RoundScore[]) => {
     const updated = addRound(scores)
-    onComplete ? onComplete(updated) : onSave()
+    onComplete ? onComplete(updated) : onSave(updated)
   }
 
   const props = { game, onSave: handleSave, onCancel }

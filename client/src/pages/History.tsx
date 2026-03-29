@@ -55,19 +55,31 @@ export default function History() {
           })).sort((a, b) => g.config.lowestScoreWins ? a.total - b.total : b.total - a.total)
 
           return (
-            <div key={g.id} className="history-card">
+            <div key={g.id} className="history-card" onClick={() => navigate(`/history/${g.id}`)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && navigate(`/history/${g.id}`)}>
               <div className="history-card-header">
                 <strong>{g.config.name}</strong>
                 <span className="muted">{new Date(g.startedAt).toLocaleDateString()}</span>
                 <button
                   className="btn-icon delete-btn"
-                  onClick={() => deleteGame(g.id)}
+                  onClick={e => { e.stopPropagation(); deleteGame(g.id) }}
                   disabled={deleting === g.id}
                   aria-label="Delete game"
                 >
                   {deleting === g.id ? '…' : '🗑'}
                 </button>
               </div>
+              {g.playerMode === 'teams' && (
+                <div className="history-teams">
+                  {g.teams.map(t => {
+                    const members = g.players.filter(p => t.playerIds.includes(p.id))
+                    return (
+                      <span key={t.id} className="muted">
+                        {t.name}: {members.map(p => p.name).join(', ')}
+                      </span>
+                    )
+                  })}
+                </div>
+              )}
               <div className="history-scores">
                 {totals.map((t, i) => (
                   <span key={i} className={i === 0 ? 'winner' : ''}>
@@ -75,7 +87,7 @@ export default function History() {
                   </span>
                 ))}
               </div>
-              <span className="muted">{g.rounds.length} rounds</span>
+              <span className="muted">{g.rounds.length} rounds · tap for details</span>
               {g.note && <p className="game-note">{g.note}</p>}
             </div>
           )

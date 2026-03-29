@@ -51,6 +51,32 @@ export function GameProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(round)
       }).catch(console.error)
     }
+
+    // Auto-end if a target score has been reached
+    const target = updated.config.targetScore
+      ?? (updated.config.customRules as Record<string, unknown>)?.targetScore as number | undefined
+    if (target) {
+      const entities = updated.playerMode === 'teams' ? updated.teams : updated.players
+      const reached = entities.some(e =>
+        updated.rounds.reduce((sum, r) => {
+          const s = r.scores.find(s => s.entityId === e.id)
+          return sum + (s?.score ?? 0)
+        }, 0) >= target
+      )
+      if (reached) {
+        const ended = { ...updated, endedAt: Date.now() }
+        persist(ended)
+        if (user) {
+          fetch(`/api/games`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+            body: JSON.stringify(ended)
+          }).catch(console.error)
+        }
+        return ended
+      }
+    }
+
     return updated
   }
 
