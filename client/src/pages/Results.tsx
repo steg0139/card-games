@@ -11,7 +11,9 @@ export default function Results() {
     return null
   }
 
+  const isCooperative = !!(game.config.customRules as Record<string, unknown>)?.cooperative
   const entities = game.playerMode === 'teams' ? game.teams : game.players
+
   const totals = entities.map(e => ({
     ...e,
     total: game.rounds.reduce((sum, r) => {
@@ -24,12 +26,16 @@ export default function Results() {
     game.config.lowestScoreWins ? a.total - b.total : b.total - a.total
   )
   const winner = sorted[0]
+  const teamTotal = isCooperative ? totals.reduce((sum, e) => sum + e.total, 0) : null
 
   return (
     <div className="page">
       <div className="results-header">
         <h2>Game Over</h2>
-        <p className="winner-text">🏆 {winner.name} wins!</p>
+        {isCooperative
+          ? <p className="winner-text">{teamTotal === 0 ? '🎉 Perfect game!' : `🃏 ${teamTotal} cards remaining`}</p>
+          : <p className="winner-text">🏆 {winner.name} wins!</p>
+        }
         {game.note && <p className="game-note">{game.note}</p>}
       </div>
 

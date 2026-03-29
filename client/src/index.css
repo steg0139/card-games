@@ -377,6 +377,16 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .results-actions .btn-primary { flex: 1; }
 .results-actions .btn-secondary { flex: 1; }
 
+.the-game-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  font-size: 1rem;
+}
+.the-game-total .perfect { color: var(--primary); }
+
 /* ── History ── */
 .history-list { display: flex; flex-direction: column; gap: 10px; }
 .history-card {

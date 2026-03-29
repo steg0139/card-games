@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '@/context/GameContext'
+import type { Game } from '@/types'
 import Scoreboard from '@/components/Scoreboard'
 import RoundEntry from '@/components/RoundEntry'
 
@@ -14,6 +15,13 @@ export default function GamePlay() {
   if (!game) {
     navigate('/')
     return null
+  }
+
+  const isSingleRound = game.config.id === 'the-game'
+
+  const handleComplete = (updatedGame: Game) => {
+    endGame(undefined, updatedGame)
+    navigate('/results')
   }
 
   const handleEndGame = () => {
@@ -33,11 +41,24 @@ export default function GamePlay() {
       <Scoreboard game={game} />
 
       {!enteringRound ? (
-        <button className="btn-primary full-width" onClick={() => setEnteringRound(true)}>
-          + Enter Round {game.rounds.length + 1}
-        </button>
+        !isSingleRound && (
+          <button className="btn-primary full-width" onClick={() => setEnteringRound(true)}>
+            + Enter Round {game.rounds.length + 1}
+          </button>
+        )
       ) : (
-        <RoundEntry game={game} onSave={() => setEnteringRound(false)} onCancel={() => setEnteringRound(false)} />
+        <RoundEntry
+          game={game}
+          onSave={() => setEnteringRound(false)}
+          onCancel={() => setEnteringRound(false)}
+          onComplete={isSingleRound ? handleComplete : undefined}
+        />
+      )}
+
+      {isSingleRound && game.rounds.length === 0 && !enteringRound && (
+        <button className="btn-primary full-width" onClick={() => setEnteringRound(true)}>
+          Enter Scores
+        </button>
       )}
 
       {showEndConfirm && (

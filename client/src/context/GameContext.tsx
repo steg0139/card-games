@@ -5,8 +5,8 @@ import { useAuth } from './AuthContext'
 interface GameContextType {
   game: Game | null
   startGame: (game: Game) => void
-  addRound: (scores: RoundScore[], extras?: Partial<Round>) => void
-  endGame: (note?: string) => void
+  addRound: (scores: RoundScore[], extras?: Partial<Round>) => Game
+  endGame: (note?: string, latestGame?: Game) => void
   clearGame: () => void
 }
 
@@ -30,8 +30,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const startGame = (g: Game) => persist(g)
 
-  const addRound = (scores: RoundScore[], extras: Partial<Round> = {}) => {
-    if (!game) return
+  const addRound = (scores: RoundScore[], extras: Partial<Round> = {}): Game => {
+    if (!game) return game!
     const round: Round = {
       roundNumber: game.rounds.length + 1,
       scores,
@@ -51,20 +51,23 @@ export function GameProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(round)
       }).catch(console.error)
     }
+    return updated
   }
 
-  const endGame = (note?: string) => {
-    if (!game) return
-    const ended = { ...game, endedAt: Date.now(), ...(note ? { note } : {}) }
+  const endGame = (note?: string, latestGame?: Game) => {
+    const base = latestGame ?? game
+    if (!base) return
+    const ended = { ...base, endedAt: Date.now(), ...(note ? { note } : {}) }
     persist(ended)
     if (user) {
-      fetch(`/api/games/${game.id}/end`, {
+      // Save the complete final game in one shot (handles cases where game wasn't synced yet)
+      fetch(`/api/games`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user.token}`
         },
-        body: JSON.stringify({ note })
+        body: JSON.stringify(ended)
       }).catch(console.error)
     }
   }

@@ -57,6 +57,21 @@ export const GAME_CONFIGS: GameConfig[] = [
     }
   },
   {
+    id: 'the-game',
+    name: 'The Game',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 4,
+    hasBidding: false,
+    hasRounds: false,
+    lowestScoreWins: true,
+    roundScoring: 'free',
+    customRules: {
+      description: 'Cooperative game. Score is the total number of cards left in all players\' hands at the end. Lower is better.',
+      cooperative: true
+    }
+  },
+  {
     id: '500',
     name: '500',
     playerMode: 'both',
