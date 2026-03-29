@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div className="page">
       <header className="app-header">
-        <h1>🃏 Card Score Tracker</h1>
+        <h1>🃏 Card Game Score Tracker</h1>
         <div className="header-actions">
           {user ? (
             <div className="user-info">
