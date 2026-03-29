@@ -2,8 +2,8 @@ import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import { randomUUID } from 'crypto'
 import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
-import { ddb, USERS_TABLE } from '../db.js'
-import { signToken } from '../middleware/auth.js'
+import { ddb, USERS_TABLE } from '../db'
+import { signToken } from '../middleware/auth'
 
 const router = Router()
 

@@ -40,7 +40,7 @@ export class CardScoreTrackerStack extends cdk.Stack {
     // ── Lambda function ──
     const apiLambda = new lambda.Function(this, 'ApiFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'src/lambda.handler',
+      handler: 'lambda.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../../server'), {
         bundling: {
           image: lambda.Runtime.NODEJS_20_X.bundlingImage,
@@ -48,10 +48,11 @@ export class CardScoreTrackerStack extends cdk.Stack {
             tryBundle(outputDir: string) {
               const { execSync } = require('child_process')
               try {
-                execSync(`cp -r ${path.join(__dirname, '../../server')}/* ${outputDir}`)
-                execSync(`cd ${outputDir} && npm install --production`)
+                execSync(`cd ${path.join(__dirname, '../../server')} && npm install`, { stdio: 'inherit' })
+                execSync(`cd ${path.join(__dirname, '../../server')} && npx tsc --outDir ${outputDir} --module commonjs --moduleResolution node`, { stdio: 'inherit' })
+                execSync(`cp -r ${path.join(__dirname, '../../server')}/node_modules ${outputDir}/node_modules`)
                 return true
-              } catch { return false }
+              } catch (e) { console.error(e); return false }
             }
           }
         }

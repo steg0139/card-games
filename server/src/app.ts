@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
-import authRoutes from './routes/auth.js'
-import gameRoutes from './routes/games.js'
+import authRoutes from './routes/auth'
+import gameRoutes from './routes/games'
 
 const app = express()
 

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { GetCommand, PutCommand, QueryCommand, DeleteCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
-import { ddb, GAMES_TABLE } from '../db.js'
-import { requireAuth, type AuthRequest } from '../middleware/auth.js'
+import { ddb, GAMES_TABLE } from '../db'
+import { requireAuth, type AuthRequest } from '../middleware/auth'
 
 const router = Router()
 router.use(requireAuth)
