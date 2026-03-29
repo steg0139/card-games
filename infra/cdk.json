@@ -1,0 +1,7 @@
+{
+  "app": "node_modules/.bin/ts-node bin/app.ts",
+  "context": {
+    "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
+    "@aws-cdk/core:stackRelativeExports": true
+  }
+}

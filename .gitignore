@@ -1,0 +1,10 @@
+node_modules/
+dist/
+client/dist/
+server/dist/
+infra/dist/
+server/data.json
+.env
+*.local
+.DS_Store
+cdk.out/
