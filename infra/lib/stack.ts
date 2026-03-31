@@ -39,11 +39,11 @@ export class CardScoreTrackerStack extends cdk.Stack {
 
     // ── Lambda function ──
     const apiLambda = new lambda.Function(this, 'ApiFunction', {
-      runtime: lambda.Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'lambda.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../../server'), {
         bundling: {
-          image: lambda.Runtime.NODEJS_20_X.bundlingImage,
+          image: lambda.Runtime.NODEJS_22_X.bundlingImage,
           local: {
             tryBundle(outputDir: string) {
               const { execSync } = require('child_process')
