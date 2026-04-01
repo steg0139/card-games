@@ -8,6 +8,7 @@ import History from '@/pages/History'
 import GameDetail from '@/pages/GameDetail'
 import CustomGameSetup from '@/pages/CustomGameSetup'
 import LogPastGame from '@/pages/LogPastGame'
+import WatchGame from '@/pages/WatchGame'
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
       <Route path="/history" element={<History />} />
       <Route path="/history/:gameId" element={<GameDetail />} />
       <Route path="/log-past" element={<LogPastGame />} />
+      <Route path="/watch/:gameId" element={<WatchGame />} />
     </Routes>
   )
 }

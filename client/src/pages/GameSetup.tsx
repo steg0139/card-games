@@ -61,19 +61,6 @@ export default function GameSetup() {
       config
     }
 
-    if (user) {
-      try {
-        await fetch('/api/games', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.token}`
-          },
-          body: JSON.stringify(game)
-        })
-      } catch { /* offline, continue with local */ }
-    }
-
     startGame(game)
     navigate('/game')
   }

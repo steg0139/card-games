@@ -444,3 +444,27 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 }
 .standing-rank { font-size: 1.1rem; width: 28px; }
 .standing-name { flex: 1; }
+
+/* ── Watch / Live view ── */
+.watch-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.watch-ended { text-align: center; padding: 12px; color: var(--muted); font-size: 0.9rem; }
+.watch-footer { text-align: center; font-size: 0.78rem; padding-top: 8px; }
+
+/* ── Scoring Rules Table ── */
+.rules-table-wrap { overflow-x: auto; }
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.rules-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.rules-table tr:last-child td { border-bottom: none; }
+.rules-table td:last-child { text-align: right; font-weight: 600; }
+.rules-table tr.divider-row td { color: var(--muted); font-size: 0.78rem; padding: 4px 12px; background: var(--bg); font-weight: normal; text-align: left; }

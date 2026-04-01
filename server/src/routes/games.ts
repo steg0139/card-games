@@ -4,6 +4,13 @@ import { ddb, GAMES_TABLE } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
 
 const router = Router()
+
+router.get('/public/:id', async (req, res) => {
+  const existing = await ddb.send(new GetCommand({ TableName: GAMES_TABLE, Key: { id: req.params.id } }))
+  if (!existing.Item) { res.status(404).json({ error: 'Game not found' }); return }
+  res.json(JSON.parse(existing.Item.data))
+})
+
 router.use(requireAuth)
 
 router.get('/', async (req: AuthRequest, res) => {

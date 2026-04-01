@@ -4,6 +4,7 @@ import { useGame } from '@/context/GameContext'
 import type { Game } from '@/types'
 import Scoreboard from '@/components/Scoreboard'
 import RoundEntry from '@/components/RoundEntry'
+import ScoringRules from '@/components/ScoringRules'
 
 export default function GamePlay() {
   const { game, endGame, clearGame } = useGame()
@@ -30,15 +31,29 @@ export default function GamePlay() {
     navigate('/results')
   }
 
+  const handleShare = () => {
+    const url = `${window.location.origin}/watch/${game.id}`
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => alert('Link copied to clipboard!'))
+    } else {
+      prompt('Copy this link to share:', url)
+    }
+  }
+
   return (
     <div className="page">
       <header className="game-header">
         <button className="btn-ghost" onClick={() => navigate('/')}>← Home</button>
         <h2>{game.config.name}</h2>
-        <button className="btn-ghost danger" onClick={() => setShowEndConfirm(true)}>End</button>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button className="btn-ghost" onClick={handleShare} title="Share live view">🔗</button>
+          <button className="btn-ghost danger" onClick={() => setShowEndConfirm(true)}>End</button>
+        </div>
       </header>
 
       <Scoreboard game={game} />
+
+      <ScoringRules config={game.config} />
 
       {!enteringRound ? (
         !isSingleRound && (

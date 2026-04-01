@@ -35,7 +35,30 @@ export const GAME_CONFIGS: GameConfig[] = [
       dirtyBook: 300,
       redThree: -500,
       blackThree: 0,
-      goingOut: 100
+      goingOut: 100,
+      laydownRequirements: [
+        { minScore: 0,    maxScore: 2000,  required: 50  },
+        { minScore: 2001, maxScore: 4000,  required: 90  },
+        { minScore: 4001, maxScore: 6000,  required: 120 },
+        { minScore: 6001, maxScore: 8000,  required: 150 },
+        { minScore: 8001, maxScore: 10000, required: 180 }
+      ],
+      cardValues: {
+        joker: 50,
+        ace: 20,
+        two: 20,
+        king: 10,
+        queen: 10,
+        jack: 10,
+        ten: 10,
+        nine: 10,
+        eight: 5,
+        seven: 5,
+        six: 5,
+        five: 5,
+        four: 5,
+        blackThree: 5
+      }
     }
   },
   {

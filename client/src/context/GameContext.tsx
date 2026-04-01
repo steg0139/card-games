@@ -28,7 +28,26 @@ export function GameProvider({ children }: { children: ReactNode }) {
     else localStorage.removeItem(LOCAL_KEY)
   }
 
-  const startGame = (g: Game) => persist(g)
+  const startGame = (g: Game) => {
+    persist(g)
+    if (user) {
+      fetch('/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        body: JSON.stringify(g)
+      }).catch(console.error)
+    }
+  }
+
+  const clearGame = () => {
+    if (game && user) {
+      fetch(`/api/games/${game.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${user.token}` }
+      }).catch(console.error)
+    }
+    persist(null)
+  }
 
   const addRound = (scores: RoundScore[], extras: Partial<Round> = {}): Game => {
     if (!game) return game!
@@ -44,10 +63,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     if (user) {
       fetch(`/api/games/${game.id}/rounds`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
         body: JSON.stringify(round)
       }).catch(console.error)
     }
@@ -67,7 +83,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         const ended = { ...updated, endedAt: Date.now() }
         persist(ended)
         if (user) {
-          fetch(`/api/games`, {
+          fetch('/api/games', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
             body: JSON.stringify(ended)
@@ -86,19 +102,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const ended = { ...base, endedAt: Date.now(), ...(note ? { note } : {}) }
     persist(ended)
     if (user) {
-      // Save the complete final game in one shot (handles cases where game wasn't synced yet)
-      fetch(`/api/games`, {
+      fetch('/api/games', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
         body: JSON.stringify(ended)
       }).catch(console.error)
     }
   }
-
-  const clearGame = () => persist(null)
 
   return (
     <GameContext.Provider value={{ game, startGame, addRound, endGame, clearGame }}>
