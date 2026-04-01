@@ -488,3 +488,24 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .step.active { color: var(--primary); font-weight: 600; }
 .step.done { color: var(--primary); }
 .bid-display { text-align: center; font-weight: 600; color: var(--primary); }
+
+/* ── 500 Bid Table ── */
+.bid-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-align: center;
+}
+.bid-table th, .bid-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.bid-table th { background: var(--bg); font-weight: 600; font-size: 0.78rem; color: var(--muted); }
+.bid-table td:first-child { text-align: left; }
+.bid-table tr:last-child td { border-bottom: none; }
+.bid-table td:last-child, .bid-table th:last-child { border-right: none; }

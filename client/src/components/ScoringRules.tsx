@@ -9,6 +9,15 @@ interface RuleRow {
   value: string | number
 }
 
+const SUITS = ['Spades', 'Clubs', 'Diamonds', 'Hearts', 'No Trump'] as const
+const BID_TABLE: Record<string, number[]> = {
+  '6':  [40,  60,  80,  100, 120],
+  '7':  [140, 160, 180, 200, 220],
+  '8':  [240, 260, 280, 300, 320],
+  '9':  [340, 360, 380, 400, 420],
+  '10': [440, 460, 480, 500, 520],
+}
+
 function getRules(config: GameConfig): RuleRow[] | null {
   const r = config.customRules as Record<string, unknown> | undefined
   if (!r) return null
@@ -17,56 +26,40 @@ function getRules(config: GameConfig): RuleRow[] | null {
     case 'hand-and-foot': {
       const laydown = r.laydownRequirements as { minScore: number; maxScore: number; required: number }[] | undefined
       return [
-        { label: 'Clean Book',        value: r.cleanBook as number },
-        { label: 'Dirty Book',        value: r.dirtyBook as number },
-        { label: 'Red Three',         value: r.redThree as number },
-        { label: 'Black Three',       value: r.blackThree as number },
-        { label: 'Going Out Bonus',   value: r.goingOut as number },
-        { label: 'Target Score',      value: r.targetScore as number },
+        { label: 'Clean Book',              value: r.cleanBook as number },
+        { label: 'Dirty Book',              value: r.dirtyBook as number },
+        { label: 'Red Three',               value: r.redThree as number },
+        { label: 'Black Three',             value: r.blackThree as number },
+        { label: 'Going Out Bonus',         value: r.goingOut as number },
+        { label: 'Target Score',            value: r.targetScore as number },
         { label: '─── Initial Laydown ───', value: '' },
         ...(laydown ?? []).map(l => ({
           label: `${l.minScore.toLocaleString()} – ${l.maxScore.toLocaleString()} pts`,
           value: l.required
         })),
-        { label: '─── Card Values ───', value: '' },
-        { label: 'Joker',             value: 50 },
-        { label: 'Ace, 2',            value: 20 },
-        { label: '9 – King',          value: 10 },
-        { label: '4 – 8, Black 3',    value: 5 },
+        { label: '─── Card Values ───',     value: '' },
+        { label: 'Joker',                   value: 50 },
+        { label: 'Ace, 2',                  value: 20 },
+        { label: '9 – King',                value: 10 },
+        { label: '4 – 8, Black 3',          value: 5 },
       ]
     }
 
     case 'wizard': {
       const rows: RuleRow[] = [
-        { label: 'Exact bid bonus',   value: `+${r.exactBidBonus}` },
-        { label: 'Per trick (made)',  value: `+${r.perTrickScore}` },
-        { label: 'Per trick (miss)',  value: `-${r.perTrickPenalty}` },
+        { label: 'Exact bid bonus',  value: `+${r.exactBidBonus}` },
+        { label: 'Per trick (made)', value: `+${r.perTrickScore}` },
+        { label: 'Per trick (miss)', value: `-${r.perTrickPenalty}` },
       ]
       if (r.noEvenBids) rows.push({ label: 'Last bidder rule', value: 'Bids cannot equal cards in hand' })
       return rows
     }
 
-    case '500':
-      return [
-        { label: 'Target score', value: r.targetScore as number },
-        { label: 'Lose at',      value: r.loseScore as number },
-        { label: '6 Spades',     value: 40 },
-        { label: '6 Clubs',      value: 60 },
-        { label: '6 Diamonds',   value: 80 },
-        { label: '6 Hearts',     value: 100 },
-        { label: '6 No Trump',   value: 120 },
-        { label: '7 Spades',     value: 140 },
-        { label: '7 No Trump',   value: 220 },
-        { label: '8 No Trump',   value: 320 },
-        { label: '9 No Trump',   value: 420 },
-        { label: '10 No Trump',  value: 520 },
-      ]
-
     case 'rummy':
       return [
-        { label: 'Ace',         value: 1 },
-        { label: 'Face cards',  value: 10 },
-        { label: 'Number cards', value: 'Face value' },
+        { label: 'Ace',               value: 1 },
+        { label: 'Face cards',        value: 10 },
+        { label: 'Number cards',      value: 'Face value' },
         { label: 'Lowest score wins', value: '✓' },
       ]
 
@@ -75,7 +68,45 @@ function getRules(config: GameConfig): RuleRow[] | null {
   }
 }
 
+function FiveHundredBidTable({ config }: { config: GameConfig }) {
+  const r = config.customRules as Record<string, unknown> | undefined
+  return (
+    <section className="detail-section">
+      <h3>Scoring Rules</h3>
+      <div className="rules-table-wrap">
+        <table className="bid-table">
+          <thead>
+            <tr>
+              <th>Bid</th>
+              {SUITS.map(s => <th key={s}>{s}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(BID_TABLE).map(([tricks, values]) => (
+              <tr key={tricks}>
+                <td><strong>{tricks}</strong></td>
+                {values.map((v, i) => <td key={i}>{v}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="rules-table-wrap" style={{ marginTop: 8 }}>
+        <table className="rules-table">
+          <tbody>
+            <tr><td>Target score</td><td>{String(r?.targetScore ?? 500)}</td></tr>
+            <tr><td>Lose at</td><td className="negative">{String(r?.loseScore ?? -500)}</td></tr>
+            <tr><td>Non-bidder per trick</td><td>10</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )
+}
+
 export default function ScoringRules({ config }: Props) {
+  if (config.id === '500') return <FiveHundredBidTable config={config} />
+
   const rules = getRules(config)
   if (!rules) return null
 
