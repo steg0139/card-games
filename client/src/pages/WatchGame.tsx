@@ -79,9 +79,9 @@ export default function WatchGame() {
         <section className="detail-section">
           <h3>Rules</h3>
           <div className="rules-panel">
-            {rules.description && <p className="rules-desc">{String(rules.description)}</p>}
-            {game.config.targetScore && <p className="muted">Target score: {game.config.targetScore}</p>}
-            {rules.targetScore && <p className="muted">Target score: {String(rules.targetScore)}</p>}
+            {!!rules.description && <p className="rules-desc">{String(rules.description)}</p>}
+            {!!game.config.targetScore && <p className="muted">Target score: {game.config.targetScore}</p>}
+            {!!rules.targetScore && <p className="muted">Target score: {String(rules.targetScore)}</p>}
           </div>
         </section>
       )}
