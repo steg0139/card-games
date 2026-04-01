@@ -131,6 +131,8 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   box-shadow: var(--shadow);
 }
 .game-card:hover { border-color: var(--primary); }
+.custom-game-card { border-style: dashed; color: var(--muted); }
+.custom-game-card:hover { border-color: var(--primary); color: var(--text); }
 .game-name { font-weight: 600; font-size: 1rem; }
 .game-meta { font-size: 0.78rem; color: var(--muted); }
 
@@ -388,6 +390,7 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .the-game-total .perfect { color: var(--primary); }
 
 /* ── History ── */
+.history-title-row { display: flex; justify-content: space-between; align-items: center; }
 .history-list { display: flex; flex-direction: column; gap: 10px; }
 .history-card {
   background: var(--surface);

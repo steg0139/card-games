@@ -50,6 +50,10 @@ export default function Home() {
               </span>
             </button>
           ))}
+          <button className="game-card custom-game-card" onClick={() => navigate('/setup-custom')}>
+            <span className="game-name">+ Custom</span>
+            <span className="game-meta">any game, simple scoring</span>
+          </button>
         </div>
       </section>
 

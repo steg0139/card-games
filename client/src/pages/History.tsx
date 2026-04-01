@@ -40,7 +40,10 @@ export default function History() {
   return (
     <div className="page">
       <button className="btn-ghost back-btn" onClick={() => navigate('/')}>← Back</button>
-      <h2>Game History</h2>
+      <div className="history-title-row">
+        <h2>Game History</h2>
+        {user && <button className="btn-secondary" onClick={() => navigate('/log-past')}>+ Log Past Game</button>}
+      </div>
       {loading && <p>Loading…</p>}
       {!loading && games.length === 0 && <p className="muted">No games yet.</p>}
       <div className="history-list">
