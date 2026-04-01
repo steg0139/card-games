@@ -7,11 +7,12 @@ import RoundEntry from '@/components/RoundEntry'
 import ScoringRules from '@/components/ScoringRules'
 
 export default function GamePlay() {
-  const { game, endGame, clearGame } = useGame()
+  const { game, endGame, clearGame, savePendingBids } = useGame()
   const navigate = useNavigate()
   const [enteringRound, setEnteringRound] = useState(false)
   const [showEndConfirm, setShowEndConfirm] = useState(false)
   const [endNote, setEndNote] = useState('')
+  const [pendingBids, setPendingBids] = useState<Record<string, number | string> | null>(null)
 
   if (!game) {
     navigate('/')
@@ -51,7 +52,7 @@ export default function GamePlay() {
         </div>
       </header>
 
-      <Scoreboard game={game} />
+      <Scoreboard game={game} pendingBids={pendingBids} />
 
       <ScoringRules config={game.config} />
 
@@ -65,11 +66,13 @@ export default function GamePlay() {
         <RoundEntry
           game={game}
           onSave={(updatedGame) => {
+            setPendingBids(null)
             if (updatedGame?.endedAt) navigate('/results')
             else setEnteringRound(false)
           }}
-          onCancel={() => setEnteringRound(false)}
+          onCancel={() => { setPendingBids(null); savePendingBids(null); setEnteringRound(false) }}
           onComplete={isSingleRound ? handleComplete : undefined}
+          onBidsChange={(bids) => { setPendingBids(bids); savePendingBids(bids) }}
         />
       )}
 

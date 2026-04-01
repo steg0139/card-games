@@ -71,7 +71,7 @@ export default function WatchGame() {
         </section>
       )}
 
-      <Scoreboard game={game} showFinal={!!game.endedAt} />
+      <Scoreboard game={game} showFinal={!!game.endedAt} pendingBids={game.pendingBids ?? null} />
 
       <ScoringRules config={game.config} />
 

@@ -8,6 +8,7 @@ interface GameContextType {
   addRound: (scores: RoundScore[], extras?: Partial<Round>) => Game
   endGame: (note?: string, latestGame?: Game) => void
   clearGame: () => void
+  savePendingBids: (bids: Record<string, number | string> | null) => void
 }
 
 const GameContext = createContext<GameContextType | null>(null)
@@ -57,7 +58,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       timestamp: Date.now(),
       ...extras
     }
-    const updated = { ...game, rounds: [...game.rounds, round] }
+    const updated = { ...game, rounds: [...game.rounds, round], pendingBids: undefined }
     persist(updated)
 
     if (user) {
@@ -110,8 +111,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const savePendingBids = (bids: Record<string, number | string> | null) => {
+    if (!game) return
+    const updated = { ...game, pendingBids: bids ?? undefined }
+    persist(updated)
+    if (user) {
+      fetch('/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        body: JSON.stringify(updated)
+      }).catch(console.error)
+    }
+  }
+
   return (
-    <GameContext.Provider value={{ game, startGame, addRound, endGame, clearGame }}>
+    <GameContext.Provider value={{ game, startGame, addRound, endGame, clearGame, savePendingBids }}>
       {children}
     </GameContext.Provider>
   )

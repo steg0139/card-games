@@ -56,7 +56,8 @@ export interface Game {
   endedAt?: number
   winnerId?: string
   note?: string
-  config: GameConfig  // snapshot of config at game start (may be customized)
+  pendingBids?: Record<string, number | string>
+  config: GameConfig
 }
 
 export interface AuthUser {

@@ -468,3 +468,23 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .rules-table tr:last-child td { border-bottom: none; }
 .rules-table td:last-child { text-align: right; font-weight: 600; }
 .rules-table tr.divider-row td { color: var(--muted); font-size: 0.78rem; padding: 4px 12px; background: var(--bg); font-weight: normal; text-align: left; }
+
+/* ── Bids display ── */
+.bids-section { padding: 8px 12px; border-top: 1px solid var(--border); }
+.bids-title { font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+.bids-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.bid-chip {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.85rem;
+}
+
+/* ── Step indicator ── */
+.step-header { display: flex; justify-content: space-between; align-items: center; }
+.step-indicator { display: flex; gap: 8px; font-size: 0.8rem; }
+.step { color: var(--muted); }
+.step.active { color: var(--primary); font-weight: 600; }
+.step.done { color: var(--primary); }
+.bid-display { text-align: center; font-weight: 600; color: var(--primary); }
