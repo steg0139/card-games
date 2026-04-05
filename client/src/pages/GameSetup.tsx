@@ -157,7 +157,7 @@ export default function GameSetup() {
                   checked={!!(config.customRules as Record<string, unknown>)?.noEvenBids}
                   onChange={e => setConfig(c => ({ ...c, customRules: { ...c.customRules, noEvenBids: e.target.checked } }))}
                 />
-                Bids can't equal cards in hand (last bidder rule)
+                Screw the dealer (bids can't equal cards in hand)
               </label>
             )}
             {config.id === 'hand-and-foot' && (() => {

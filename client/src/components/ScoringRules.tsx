@@ -50,8 +50,11 @@ function getRules(config: GameConfig): RuleRow[] | null {
         { label: 'Exact bid bonus',  value: `+${r.exactBidBonus}` },
         { label: 'Per trick (made)', value: `+${r.perTrickScore}` },
         { label: 'Per trick (miss)', value: `-${r.perTrickPenalty}` },
+        { label: '3–6 players',      value: '1 deck' },
+        { label: '7–12 players',     value: '2 decks' },
+        { label: '13–18 players',    value: '3 decks' },
       ]
-      if (r.noEvenBids) rows.push({ label: 'Last bidder rule', value: 'Bids cannot equal cards in hand' })
+      if (r.noEvenBids) rows.push({ label: 'Screw the dealer', value: 'Bids cannot equal cards in hand' })
       return rows
     }
 

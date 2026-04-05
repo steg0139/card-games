@@ -66,7 +66,7 @@ export const GAME_CONFIGS: GameConfig[] = [
     name: 'Wizard',
     playerMode: 'individual',
     minPlayers: 3,
-    maxPlayers: 6,
+    maxPlayers: 18,
     hasBidding: true,
     hasRounds: true,
     lowestScoreWins: false,
@@ -76,7 +76,12 @@ export const GAME_CONFIGS: GameConfig[] = [
       exactBidBonus: 20,
       perTrickScore: 10,
       perTrickPenalty: 10,
-      noEvenBids: false
+      noEvenBids: false,
+      deckThresholds: [
+        { minPlayers: 3,  maxPlayers: 6,  decks: 1 },
+        { minPlayers: 7,  maxPlayers: 12, decks: 2 },
+        { minPlayers: 13, maxPlayers: 18, decks: 3 },
+      ]
     }
   },
   {

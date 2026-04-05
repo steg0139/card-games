@@ -11,12 +11,23 @@ interface Props {
 export default function WizardRoundEntry({ game, onSave, onCancel, onBidsChange }: Props) {
   const roundNum = game.rounds.length + 1
   const entities = game.players
+  const playerCount = entities.length
   const rules = game.config.customRules as {
     exactBidBonus: number
     perTrickScore: number
     perTrickPenalty: number
     noEvenBids?: boolean
+    deckThresholds?: { minPlayers: number; maxPlayers: number; decks: number }[]
   }
+
+  // Determine deck count based on player count
+  const decks = rules.deckThresholds?.find(
+    t => playerCount >= t.minPlayers && playerCount <= t.maxPlayers
+  )?.decks ?? 1
+
+  // Total cards per deck is 60 (52 + 4 wizards + 4 jesters)
+  const cardsPerDeck = 60
+  const maxRounds = Math.floor((cardsPerDeck * decks) / playerCount)
 
   const [step, setStep] = useState<'bids' | 'tricks'>('bids')
   const [bids, setBids] = useState<Record<string, string>>(Object.fromEntries(entities.map(e => [e.id, ''])))
@@ -60,7 +71,7 @@ export default function WizardRoundEntry({ game, onSave, onCancel, onBidsChange 
   return (
     <div className="round-entry">
       <div className="step-header">
-        <h3>Round {roundNum}</h3>
+        <h3>Round {roundNum} <span className="muted">of {maxRounds}</span></h3>
         <div className="step-indicator">
           <span className={step === 'bids' ? 'step active' : 'step done'}>1. Bids</span>
           <span className={step === 'tricks' ? 'step active' : 'step'}>2. Results</span>
