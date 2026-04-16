@@ -588,3 +588,58 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 /* ── History search ── */
 .history-search { display: flex; gap: 6px; align-items: center; }
 .history-search input { flex: 1; }
+
+/* ── Play Nine ── */
+.play-nine-player {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.play-nine-header { display: flex; justify-content: space-between; align-items: center; }
+.play-nine-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.play-nine-col { display: flex; flex-direction: column; gap: 4px; }
+.play-nine-col select { padding: 6px 4px; font-size: 0.82rem; text-align: center; }
+.play-nine-col select.card-match {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  font-weight: 600;
+}
+
+/* ── Phase 10 ── */
+.phase10-grid-header {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 80px 80px;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0 4px;
+}
+.phase10-row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 80px 80px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.phase10-row:last-of-type { border-bottom: none; }
+.phase-info { display: flex; flex-direction: column; gap: 2px; }
+.phase-badge {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  width: fit-content;
+}
+.phase-desc { font-size: 0.72rem; line-height: 1.2; }

@@ -66,6 +66,38 @@ function getRules(config: GameConfig): RuleRow[] | null {
         { label: 'Lowest score wins', value: '✓' },
       ]
 
+    case 'play-nine':
+      return [
+        { label: 'Hole-in-One',         value: -5 },
+        { label: 'Mulligan',            value: 0 },
+        { label: 'Cards 1–11',          value: 'Face value' },
+        { label: 'Out of Bounds',       value: 12 },
+        { label: '─── Matching Bonuses ───', value: '' },
+        { label: 'Matching 2 (1 col)',  value: 0 },
+        { label: 'Matching 4 (2 cols)', value: -10 },
+        { label: 'Matching 6 (3 cols)', value: -15 },
+        { label: 'Matching 8 (4 cols)', value: -20 },
+        { label: 'Total holes',         value: 9 },
+      ]
+
+    case 'phase-10':
+      return [
+        { label: 'Cards 1–9',    value: '5 pts' },
+        { label: 'Cards 10–12',  value: '10 pts' },
+        { label: 'Wild card',    value: '25 pts' },
+        { label: '─── Phases ───', value: '' },
+        { label: 'Phase 1',  value: '2 sets of 3' },
+        { label: 'Phase 2',  value: '1 set of 3 + 1 run of 4' },
+        { label: 'Phase 3',  value: '1 set of 4 + 1 run of 4' },
+        { label: 'Phase 4',  value: '1 run of 7' },
+        { label: 'Phase 5',  value: '1 run of 8' },
+        { label: 'Phase 6',  value: '1 run of 9' },
+        { label: 'Phase 7',  value: '2 sets of 4' },
+        { label: 'Phase 8',  value: '7 cards of one color' },
+        { label: 'Phase 9',  value: '1 set of 5 + 1 set of 2' },
+        { label: 'Phase 10', value: '1 set of 5 + 1 set of 3' },
+      ]
+
     default:
       return null
   }

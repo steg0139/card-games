@@ -4,6 +4,7 @@ import { getGameConfig } from '@/games/configs'
 import { useGame } from '@/context/GameContext'
 import { useAuth } from '@/context/AuthContext'
 import type { Game, Player, Team, PlayerMode, GameConfig } from '@/types'
+import PlayerInput, { type LinkedPlayer } from '@/components/PlayerInput'
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10)
@@ -18,27 +19,27 @@ export default function GameSetup() {
 
   const [config, setConfig] = useState<GameConfig>(baseConfig ? { ...baseConfig } : {} as GameConfig)
   const [playerMode, setPlayerMode] = useState<PlayerMode>('individual')
-  const [playerNames, setPlayerNames] = useState<string[]>(['', ''])
+  const [playerNames, setPlayerNames] = useState<LinkedPlayer[]>([{ name: '' }, { name: '' }])
   const [teamNames, setTeamNames] = useState<string[]>(['Team 1', 'Team 2'])
   const [teamAssignments, setTeamAssignments] = useState<Record<string, string>>({})
   const [showRules, setShowRules] = useState(false)
 
   if (!baseConfig) return <div className="page"><p>Game not found.</p></div>
 
-  const addPlayer = () => setPlayerNames(p => [...p, ''])
+  const addPlayer = () => setPlayerNames(p => [...p, { name: '' }])
   const removePlayer = (i: number) => setPlayerNames(p => p.filter((_, idx) => idx !== i))
   const addTeam = () => setTeamNames(t => [...t, `Team ${t.length + 1}`])
   const removeTeam = (i: number) => setTeamNames(t => t.filter((_, idx) => idx !== i))
 
   const canStart = playerMode === 'individual'
-    ? playerNames.filter(n => n.trim()).length >= config.minPlayers
+    ? playerNames.filter(n => n.name.trim()).length >= config.minPlayers
     : teamNames.filter(n => n.trim()).length >= (config.minTeams ?? 2) &&
-      playerNames.filter(n => n.trim()).length >= config.minPlayers
+      playerNames.filter(n => n.name.trim()).length >= config.minPlayers
 
   const handleStart = async () => {
     const players: Player[] = playerNames
-      .filter(n => n.trim())
-      .map(name => ({ id: generateId(), name: name.trim() }))
+      .filter(n => n.name.trim())
+      .map(p => ({ id: generateId(), name: p.name.trim(), ...(p.linkedUserId ? { linkedUserId: p.linkedUserId } : {}) }))
 
     const teams: Team[] = playerMode === 'teams'
       ? teamNames.filter(n => n.trim()).map((name, i) => ({
@@ -85,13 +86,12 @@ export default function GameSetup() {
 
       <section className="setup-section">
         <h3>Players</h3>
-        {playerNames.map((name, i) => (
+        {playerNames.map((player, i) => (
           <div key={i} className="player-row">
-            <input
-              type="text"
+            <PlayerInput
+              value={player}
+              onChange={p => setPlayerNames(arr => arr.map((n, idx) => idx === i ? p : n))}
               placeholder={`Player ${i + 1}`}
-              value={name}
-              onChange={e => setPlayerNames(p => p.map((n, idx) => idx === i ? e.target.value : n))}
             />
             {playerMode === 'teams' && (
               <select

@@ -100,6 +100,63 @@ export const GAME_CONFIGS: GameConfig[] = [
     }
   },
   {
+    id: 'phase-10',
+    name: 'Phase 10',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 6,
+    hasBidding: false,
+    hasRounds: true,
+    lowestScoreWins: true,
+    roundScoring: 'free',
+    customRules: {
+      description: 'Complete all 10 phases. Score points for cards left in hand. Lowest score wins when someone completes Phase 10.',
+      phases: [
+        '2 sets of 3',
+        '1 set of 3 + 1 run of 4',
+        '1 set of 4 + 1 run of 4',
+        '1 run of 7',
+        '1 run of 8',
+        '1 run of 9',
+        '2 sets of 4',
+        '7 cards of one color',
+        '1 set of 5 + 1 set of 2',
+        '1 set of 5 + 1 set of 3',
+      ],
+      cardValues: {
+        numbered: '5 pts (1–9)',
+        skipAndColored: '10 pts (10–12)',
+        wild: '25 pts',
+      }
+    }
+  },
+  {
+    id: 'play-nine',
+    name: 'Play Nine',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 8,
+    hasBidding: false,
+    hasRounds: true,
+    lowestScoreWins: true,
+    roundScoring: 'free',
+    customRules: {
+      description: 'Golf-themed card game. 9 holes, lowest total score wins. Cards 0–12, Hole-in-One = -5.',
+      totalHoles: 9,
+      cardValues: {
+        mulligan: 0,
+        holeInOne: -5,
+        outOfBounds: 12
+      },
+      matchingBonuses: {
+        twoCards: 0,
+        fourCards: -10,
+        sixCards: -15,
+        eightCards: -20
+      }
+    }
+  },
+  {
     id: '500',
     name: '500',
     playerMode: 'both',

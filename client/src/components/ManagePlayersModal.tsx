@@ -1,28 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { Game } from '@/types'
 import { useGame } from '@/context/GameContext'
 import { useAuth } from '@/context/AuthContext'
+import PlayerInput, { type LinkedPlayer } from '@/components/PlayerInput'
 
 interface Props {
   game: Game
   onClose: () => void
 }
 
-interface UserResult {
-  id: string
-  username: string
-}
-
 export default function ManagePlayersModal({ game, onClose }: Props) {
   const { addPlayer, removePlayer } = useGame()
   const { user } = useAuth()
-  const [newName, setNewName] = useState('')
+  const [newPlayer, setNewPlayer] = useState<LinkedPlayer>({ name: '' })
   const [startingScore, setStartingScore] = useState('0')
   const [position, setPosition] = useState<string>('')
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<UserResult[]>([])
-  const [linkedUser, setLinkedUser] = useState<UserResult | null>(null)
 
   const hasOrdering = game.config.hasBidding
 
@@ -38,15 +31,12 @@ export default function ManagePlayersModal({ game, onClose }: Props) {
   }, [searchQuery])
 
   const handleAdd = () => {
-    const name = linkedUser ? linkedUser.username : newName.trim()
-    if (!name) return
+    if (!newPlayer.name.trim()) return
     const pos = position !== '' ? Number(position) : undefined
-    addPlayer(name, Number(startingScore) || 0, pos, linkedUser?.id)
-    setNewName('')
+    addPlayer(newPlayer.name.trim(), Number(startingScore) || 0, pos, newPlayer.linkedUserId)
+    setNewPlayer({ name: '' })
     setStartingScore('0')
     setPosition('')
-    setLinkedUser(null)
-    setSearchQuery('')
   }
 
   return (
@@ -80,51 +70,13 @@ export default function ManagePlayersModal({ game, onClose }: Props) {
 
         <section className="setup-section">
           <h3>Add Player</h3>
-
-          {user && (
-            <>
-              <label>Search by username
-                <input
-                  type="text"
-                  placeholder="Type to search…"
-                  value={searchQuery}
-                  onChange={e => { setSearchQuery(e.target.value); setLinkedUser(null) }}
-                />
-              </label>
-              {searchResults.length > 0 && !linkedUser && (
-                <div className="search-results">
-                  {searchResults.map(u => (
-                    <button key={u.id} className="search-result-item" onClick={() => {
-                      setLinkedUser(u)
-                      setNewName(u.username)
-                      setSearchQuery(u.username)
-                      setSearchResults([])
-                    }}>
-                      {u.username}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {linkedUser && (
-                <p className="muted" style={{ fontSize: '0.82rem' }}>
-                  Linked to @{linkedUser.username} — game will appear in their history when complete.
-                  <button className="btn-ghost" style={{ padding: '2px 6px', fontSize: '0.78rem' }}
-                    onClick={() => { setLinkedUser(null); setNewName(''); setSearchQuery('') }}>✕</button>
-                </p>
-              )}
-              {!linkedUser && <p className="muted" style={{ fontSize: '0.78rem' }}>Or enter a name manually:</p>}
-            </>
-          )}
-
-          {!linkedUser && (
-            <input
-              type="text"
-              placeholder="Player name"
-              value={newName}
-              onChange={e => setNewName(e.target.value)}
+          <div className="player-row">
+            <PlayerInput
+              value={newPlayer}
+              onChange={setNewPlayer}
+              placeholder="Name or search username…"
             />
-          )}
-
+          </div>
           <label>
             Starting score
             <input
@@ -134,7 +86,6 @@ export default function ManagePlayersModal({ game, onClose }: Props) {
               onChange={e => setStartingScore(e.target.value)}
             />
           </label>
-
           {hasOrdering && (
             <label>
               Insert at position (leave blank for end)
@@ -146,9 +97,7 @@ export default function ManagePlayersModal({ game, onClose }: Props) {
               </select>
             </label>
           )}
-
-          <button className="btn-secondary" onClick={handleAdd}
-            disabled={!linkedUser && !newName.trim()}>
+          <button className="btn-secondary" onClick={handleAdd} disabled={!newPlayer.name.trim()}>
             + Add Player
           </button>
         </section>

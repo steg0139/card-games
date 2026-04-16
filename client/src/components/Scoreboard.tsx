@@ -35,6 +35,21 @@ export default function Scoreboard({ game, showFinal, pendingBids }: Props) {
   const lastRound = game.rounds[game.rounds.length - 1]
   const hasBids = game.config.hasBidding && lastRound?.scores.some(s => s.bid !== undefined)
 
+  // Show current phase for Phase 10
+  const isPhase10 = game.config.id === 'phase-10'
+  const getPlayerPhase = (playerId: string) => {
+    let phase = 1
+    for (const round of game.rounds) {
+      const score = round.scores.find(s => s.entityId === playerId)
+      if (score?.note?.startsWith('phase:')) {
+        const completed = score.note.includes(':completed')
+        const phaseNum = parseInt(score.note.split(':')[1])
+        if (completed && phaseNum === phase) phase = Math.min(phase + 1, 10)
+      }
+    }
+    return phase
+  }
+
   return (
     <div className="scoreboard">
       <div className="scoreboard-table-wrap" ref={scrollRef}>
@@ -49,7 +64,12 @@ export default function Scoreboard({ game, showFinal, pendingBids }: Props) {
           <tbody>
             {sorted.map(e => (
               <tr key={e.id}>
-                <td className="name-col">{e.name}</td>
+                <td className="name-col">
+                  {e.name}
+                  {isPhase10 && (
+                    <span className="phase-badge" style={{ marginLeft: 4 }}>P{getPlayerPhase(e.id)}</span>
+                  )}
+                </td>
                 {e.roundScores.map((s, i) => <td key={i}>{s}</td>)}
                 <td className="total-col"><strong>{e.total}</strong></td>
               </tr>
