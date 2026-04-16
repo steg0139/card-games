@@ -9,7 +9,7 @@ interface GameContextType {
   endGame: (note?: string, latestGame?: Game) => void
   clearGame: () => void
   savePendingBids: (bids: Record<string, number | string> | null) => void
-  addPlayer: (name: string, startingScore: number, position?: number) => void
+  addPlayer: (name: string, startingScore: number, position?: number, linkedUserId?: string) => void
   removePlayer: (playerId: string) => void
 }
 
@@ -110,6 +110,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
         body: JSON.stringify(ended)
       }).catch(console.error)
+
+      // Copy game to each linked player's history
+      const linkedPlayers = ended.players.filter(p => p.linkedUserId && p.linkedUserId !== user.id)
+      linkedPlayers.forEach(p => {
+        const copy = { ...ended, id: `${ended.id}-${p.linkedUserId}` }
+        fetch('/api/games/linked', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+          body: JSON.stringify({ game: copy, userId: p.linkedUserId })
+        }).catch(console.error)
+      })
     }
   }
 
@@ -126,9 +137,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const addPlayer = (name: string, startingScore: number, position?: number) => {
+  const addPlayer = (name: string, startingScore: number, position?: number, linkedUserId?: string) => {
     if (!game) return
-    const newPlayer = { id: Math.random().toString(36).slice(2, 10), name }
+    const newPlayer = { id: Math.random().toString(36).slice(2, 10), name, ...(linkedUserId ? { linkedUserId } : {}) }
     const players = [...game.players]
     if (position !== undefined) players.splice(position, 0, newPlayer)
     else players.push(newPlayer)

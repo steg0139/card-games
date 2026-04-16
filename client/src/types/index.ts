@@ -3,6 +3,7 @@ export type PlayerMode = 'individual' | 'teams'
 export interface Player {
   id: string
   name: string
+  linkedUserId?: string
 }
 
 export interface Team {

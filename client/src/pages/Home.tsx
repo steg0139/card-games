@@ -1,12 +1,25 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { useGame } from '@/context/GameContext'
 import { useAuth } from '@/context/AuthContext'
 import { GAME_CONFIGS } from '@/games/configs'
+import type { Game } from '@/types'
 
 export default function Home() {
   const navigate = useNavigate()
   const { game, clearGame } = useGame()
   const { user, logout } = useAuth()
+  const [activeForMe, setActiveForMe] = useState<Game[]>([])
+
+  useEffect(() => {
+    if (!user) return
+    fetch('/api/games/active-for-me', {
+      headers: { Authorization: `Bearer ${user.token}` }
+    })
+      .then(r => r.json())
+      .then(setActiveForMe)
+      .catch(console.error)
+  }, [user])
 
   return (
     <div className="page">
@@ -32,6 +45,25 @@ export default function Home() {
             <button className="btn-ghost" onClick={clearGame}>Abandon</button>
           </div>
         </div>
+      )}
+
+      {activeForMe.length > 0 && (
+        <section className="game-list">
+          <h2>Games you're in</h2>
+          <div className="active-for-me-list">
+            {activeForMe.map(g => (
+              <div key={g.id} className="active-for-me-card">
+                <div>
+                  <strong>{g.config.name}</strong>
+                  <span className="muted"> · {g.players.find(p => p.linkedUserId === user?.id)?.name ?? 'You'}</span>
+                </div>
+                <button className="btn-primary" onClick={() => navigate(`/watch/${g.id}`)}>
+                  Watch Live
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       <section className="game-list">

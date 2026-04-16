@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { GetCommand, PutCommand, QueryCommand, DeleteCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import { GetCommand, PutCommand, QueryCommand, DeleteCommand, UpdateCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
 import { ddb, GAMES_TABLE } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
 
@@ -11,7 +11,37 @@ router.get('/public/:id', async (req, res) => {
   res.json(JSON.parse(existing.Item.data))
 })
 
+// Save a game copy to another user's history (called by game owner on end)
+router.post('/linked', async (req, res) => {
+  const { game, userId } = req.body
+  if (!game || !userId) { res.status(400).json({ error: 'Missing game or userId' }); return }
+  await ddb.send(new PutCommand({
+    TableName: GAMES_TABLE,
+    Item: { id: game.id, userId, data: JSON.stringify(game), startedAt: game.startedAt, endedAt: game.endedAt }
+  }))
+  res.json({ ok: true })
+})
+
 router.use(requireAuth)
+
+router.get('/active-for-me', async (req: AuthRequest, res) => {
+  // Find games where this user is a linked player but not the owner, and game is not ended
+  const result = await ddb.send(new ScanCommand({
+    TableName: GAMES_TABLE,
+    FilterExpression: 'attribute_not_exists(endedAt) AND userId <> :uid AND contains(#data, :linkedId)',
+    ExpressionAttributeNames: { '#data': 'data' },
+    ExpressionAttributeValues: {
+      ':uid': req.userId,
+      ':linkedId': req.userId  // userId appears in the JSON data as linkedUserId
+    }
+  }))
+
+  const games = (result.Items ?? [])
+    .map(item => JSON.parse(item.data))
+    .filter((g: any) => g.players?.some((p: any) => p.linkedUserId === req.userId))
+
+  res.json(games)
+})
 
 router.get('/', async (req: AuthRequest, res) => {
   const result = await ddb.send(new QueryCommand({

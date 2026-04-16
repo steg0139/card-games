@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10)
   await ddb.send(new PutCommand({
     TableName: USERS_TABLE,
-    Item: { id, username, passwordHash, createdAt: Date.now() }
+    Item: { id, username, usernameLower: username.toLowerCase(), passwordHash, createdAt: Date.now() }
   }))
   res.json({ id, username, token: signToken(id) })
 })

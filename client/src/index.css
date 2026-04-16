@@ -541,3 +541,46 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .player-position { font-size: 0.78rem; color: var(--muted); width: 18px; text-align: center; }
 .player-manage-name { flex: 1; font-weight: 500; }
 .confirm-remove { display: flex; align-items: center; gap: 4px; }
+
+/* ── User search ── */
+.search-results {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.search-result-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  background: transparent;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--primary-light); }
+.linked-badge {
+  font-size: 0.7rem;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-radius: 10px;
+  padding: 1px 6px;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+/* ── Active games for linked users ── */
+.active-for-me-list { display: flex; flex-direction: column; gap: 8px; }
+.active-for-me-card {
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
