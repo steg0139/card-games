@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { GAME_CONFIGS } from '@/games/configs'
 import type { Game } from '@/types'
 
 export default function History() {
@@ -9,6 +10,27 @@ export default function History() {
   const [games, setGames] = useState<Game[]>([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    if (!user) { navigate('/auth'); return }
+    fetch('/api/games', {
+      headers: { Authorization: `Bearer ${user.token}` }
+    })
+      .then(r => r.json())
+      .then(setGames)
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [user, navigate])
+
+  const filtered = search.trim()
+    ? games.filter(g => {
+        const q = search.trim().toLowerCase()
+        const matchesGame = g.config.name.toLowerCase().includes(q)
+        const matchesPlayer = g.players.some(p => p.name.toLowerCase().includes(q))
+        return matchesGame || matchesPlayer
+      })
+    : games
 
   useEffect(() => {
     if (!user) { navigate('/auth'); return }
@@ -44,10 +66,27 @@ export default function History() {
         <h2>Game History</h2>
         {user && <button className="btn-secondary" onClick={() => navigate('/log-past')}>+ Log Past Game</button>}
       </div>
+      <div className="history-search">
+        <input
+          type="search"
+          list="game-names"
+          placeholder="Search by game or player…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <datalist id="game-names">
+          {GAME_CONFIGS.map(g => <option key={g.id} value={g.name} />)}
+        </datalist>
+        {search && (
+          <button className="btn-ghost" onClick={() => setSearch('')} style={{ padding: '0 8px' }}>✕</button>
+        )}
+      </div>
       {loading && <p>Loading…</p>}
-      {!loading && games.length === 0 && <p className="muted">No games yet.</p>}
+      {!loading && filtered.length === 0 && (
+        <p className="muted">{search ? `No games found for "${search}"` : 'No games yet.'}</p>
+      )}
       <div className="history-list">
-        {games.map(g => {
+        {filtered.map(g => {
           const entities = g.playerMode === 'teams' ? g.teams : g.players
           const totals = entities.map(e => ({
             name: e.name,

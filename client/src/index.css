@@ -584,3 +584,7 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
   gap: 12px;
   box-shadow: var(--shadow);
 }
+
+/* ── History search ── */
+.history-search { display: flex; gap: 6px; align-items: center; }
+.history-search input { flex: 1; }
