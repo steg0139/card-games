@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { Game } from '@/types'
 
 interface Props {
@@ -7,6 +8,13 @@ interface Props {
 }
 
 export default function Scoreboard({ game, showFinal, pendingBids }: Props) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth
+    }
+  }, [game.rounds.length])
   const entities = game.playerMode === 'teams' ? game.teams : game.players
 
   const totals = entities.map(e => ({
@@ -19,9 +27,9 @@ export default function Scoreboard({ game, showFinal, pendingBids }: Props) {
     }, 0)
   }))
 
-  const sorted = showFinal
-    ? [...totals].sort((a, b) => game.config.lowestScoreWins ? a.total - b.total : b.total - a.total)
-    : totals
+  const sorted = [...totals].sort((a, b) =>
+    game.config.lowestScoreWins ? a.total - b.total : b.total - a.total
+  )
 
   // Show bids from the last round if the game uses bidding
   const lastRound = game.rounds[game.rounds.length - 1]
@@ -29,7 +37,7 @@ export default function Scoreboard({ game, showFinal, pendingBids }: Props) {
 
   return (
     <div className="scoreboard">
-      <div className="scoreboard-table-wrap">
+      <div className="scoreboard-table-wrap" ref={scrollRef}>
         <table className="scoreboard-table">
           <thead>
             <tr>

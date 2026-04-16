@@ -5,6 +5,7 @@ import type { Game } from '@/types'
 import Scoreboard from '@/components/Scoreboard'
 import RoundEntry from '@/components/RoundEntry'
 import ScoringRules from '@/components/ScoringRules'
+import ManagePlayersModal from '@/components/ManagePlayersModal'
 
 export default function GamePlay() {
   const { game, endGame, clearGame, savePendingBids } = useGame()
@@ -13,6 +14,7 @@ export default function GamePlay() {
   const [showEndConfirm, setShowEndConfirm] = useState(false)
   const [endNote, setEndNote] = useState('')
   const [pendingBids, setPendingBids] = useState<Record<string, number | string> | null>(null)
+  const [showManagePlayers, setShowManagePlayers] = useState(false)
 
   if (!game) {
     navigate('/')
@@ -47,6 +49,7 @@ export default function GamePlay() {
         <button className="btn-ghost" onClick={() => navigate('/')}>← Home</button>
         <h2>{game.config.name}</h2>
         <div style={{ display: 'flex', gap: '4px' }}>
+          <button className="btn-ghost" onClick={() => setShowManagePlayers(true)} title="Manage players">👥</button>
           <button className="btn-ghost" onClick={handleShare} title="Share live view">🔗</button>
           <button className="btn-ghost danger" onClick={() => setShowEndConfirm(true)}>End</button>
         </div>
@@ -80,6 +83,10 @@ export default function GamePlay() {
         <button className="btn-primary full-width" onClick={() => setEnteringRound(true)}>
           Enter Scores
         </button>
+      )}
+
+      {showManagePlayers && (
+        <ManagePlayersModal game={game} onClose={() => setShowManagePlayers(false)} />
       )}
 
       {showEndConfirm && (

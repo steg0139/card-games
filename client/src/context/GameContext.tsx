@@ -9,6 +9,8 @@ interface GameContextType {
   endGame: (note?: string, latestGame?: Game) => void
   clearGame: () => void
   savePendingBids: (bids: Record<string, number | string> | null) => void
+  addPlayer: (name: string, startingScore: number, position?: number) => void
+  removePlayer: (playerId: string) => void
 }
 
 const GameContext = createContext<GameContextType | null>(null)
@@ -124,8 +126,60 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const addPlayer = (name: string, startingScore: number, position?: number) => {
+    if (!game) return
+    const newPlayer = { id: Math.random().toString(36).slice(2, 10), name }
+    const players = [...game.players]
+    if (position !== undefined) players.splice(position, 0, newPlayer)
+    else players.push(newPlayer)
+
+    // Add starting score to each existing round as 0, and inject startingScore as a synthetic first entry
+    const rounds = game.rounds.map(r => ({
+      ...r,
+      scores: [...r.scores, { entityId: newPlayer.id, score: 0 }]
+    }))
+
+    // If starting score is non-zero, add it to round 1 or create a synthetic round
+    if (startingScore !== 0 && rounds.length > 0) {
+      rounds[0] = {
+        ...rounds[0],
+        scores: rounds[0].scores.map(s =>
+          s.entityId === newPlayer.id ? { ...s, score: startingScore } : s
+        )
+      }
+    }
+
+    const updated = { ...game, players, rounds }
+    persist(updated)
+    if (user) {
+      fetch('/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        body: JSON.stringify(updated)
+      }).catch(console.error)
+    }
+  }
+
+  const removePlayer = (playerId: string) => {
+    if (!game) return
+    const players = game.players.filter(p => p.id !== playerId)
+    const rounds = game.rounds.map(r => ({
+      ...r,
+      scores: r.scores.filter(s => s.entityId !== playerId)
+    }))
+    const updated = { ...game, players, rounds }
+    persist(updated)
+    if (user) {
+      fetch('/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        body: JSON.stringify(updated)
+      }).catch(console.error)
+    }
+  }
+
   return (
-    <GameContext.Provider value={{ game, startGame, addRound, endGame, clearGame, savePendingBids }}>
+    <GameContext.Provider value={{ game, startGame, addRound, endGame, clearGame, savePendingBids, addPlayer, removePlayer }}>
       {children}
     </GameContext.Provider>
   )

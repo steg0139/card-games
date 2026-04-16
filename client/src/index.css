@@ -250,8 +250,27 @@ input:focus, select:focus { outline: 2px solid var(--primary); border-color: tra
   border-bottom: 1px solid var(--border);
 }
 .scoreboard-table th { background: var(--bg); font-weight: 600; font-size: 0.8rem; color: var(--muted); }
-.scoreboard-table .name-col { text-align: left; min-width: 90px; }
-.scoreboard-table .total-col { font-size: 1rem; }
+.scoreboard-table tbody tr:nth-child(even) td { background: var(--bg); }
+.scoreboard-table tbody tr:nth-child(even) td.name-col,
+.scoreboard-table tbody tr:nth-child(even) td.total-col { background: var(--bg); }
+.scoreboard-table .name-col {
+  text-align: left;
+  min-width: 90px;
+  position: sticky;
+  left: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+.scoreboard-table th.name-col { background: var(--bg); }
+.scoreboard-table .total-col {
+  font-size: 1rem;
+  position: sticky;
+  right: 0;
+  background: var(--surface);
+  z-index: 1;
+  border-left: 1px solid var(--border);
+}
+.scoreboard-table th.total-col { background: var(--bg); }
 .target-note { padding: 6px 10px; font-size: 0.8rem; color: var(--muted); text-align: right; }
 
 /* ── Round Entry ── */
@@ -509,3 +528,16 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 .bid-table td:first-child { text-align: left; }
 .bid-table tr:last-child td { border-bottom: none; }
 .bid-table td:last-child, .bid-table th:last-child { border-right: none; }
+
+/* ── Manage Players ── */
+.player-manage-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.player-manage-row:last-child { border-bottom: none; }
+.player-position { font-size: 0.78rem; color: var(--muted); width: 18px; text-align: center; }
+.player-manage-name { flex: 1; font-weight: 500; }
+.confirm-remove { display: flex; align-items: center; gap: 4px; }
