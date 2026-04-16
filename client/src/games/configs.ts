@@ -131,6 +131,33 @@ export const GAME_CONFIGS: GameConfig[] = [
     }
   },
   {
+    id: 'cribbage',
+    name: 'Cribbage',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 2,
+    hasBidding: false,
+    hasRounds: true,
+    lowestScoreWins: false,
+    roundScoring: 'free',
+    customRules: {
+      description: 'First player to 121 points wins. Score points each hand for pairs, runs, fifteens, nobs, and pegging.',
+      targetScore: 121,
+      scoring: {
+        fifteen: 2,
+        pair: 2,
+        run3: 3,
+        run4: 4,
+        run5: 5,
+        flush4: 4,
+        flush5: 5,
+        nobs: 1,
+        nibs: 2,
+        heels: 2,
+      }
+    }
+  },
+  {
     id: 'skyjo',
     name: 'Skyjo',
     playerMode: 'individual',

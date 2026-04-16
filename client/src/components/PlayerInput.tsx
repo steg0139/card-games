@@ -23,6 +23,7 @@ export default function PlayerInput({ value, onChange, placeholder = 'Player nam
   const [results, setResults] = useState<UserResult[]>([])
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const cancelRef = useRef(false)
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -35,10 +36,13 @@ export default function PlayerInput({ value, onChange, placeholder = 'Player nam
 
   useEffect(() => {
     if (!user || query.length < 2) { setResults([]); return }
+    cancelRef.current = false
     const timeout = setTimeout(async () => {
+      if (cancelRef.current) return
       try {
         const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`)
         const data = await res.json()
+        if (cancelRef.current) return
         setResults(data)
         setOpen(data.length > 0)
       } catch { setResults([]) }
@@ -68,7 +72,8 @@ export default function PlayerInput({ value, onChange, placeholder = 'Player nam
         value={query}
         onChange={e => handleChange(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        onBlur={() => { cancelRef.current = true; setTimeout(() => setOpen(false), 150) }}
+        onKeyDown={e => { if (e.key === 'Tab') { cancelRef.current = true; setOpen(false) } }}
         style={{ width: '100%' }}
       />
       {value.linkedUserId && (

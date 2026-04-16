@@ -124,6 +124,21 @@ function getRules(config: GameConfig): RuleRow[] | null {
         { label: '3 matching in column', value: 'Discard (score 0)' },
       ]
 
+    case 'cribbage':
+      return [
+        { label: 'Win at',           value: 121 },
+        { label: '─── Scoring ───',  value: '' },
+        { label: 'Fifteen',          value: 2 },
+        { label: 'Pair',             value: 2 },
+        { label: 'Run of 3',         value: 3 },
+        { label: 'Run of 4',         value: 4 },
+        { label: 'Run of 5',         value: 5 },
+        { label: 'Flush (hand)',      value: 4 },
+        { label: 'Flush (with crib)', value: 5 },
+        { label: 'Nobs (J of turn)',  value: 1 },
+        { label: 'Nibs / Heels',     value: 2 },
+      ]
+
     default:
       return null
   }
