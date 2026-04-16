@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import { randomUUID } from 'crypto'
-import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import { ddb, USERS_TABLE } from '../db'
 import { signToken } from '../middleware/auth'
 
@@ -40,7 +40,7 @@ router.post('/login', async (req, res) => {
     KeyConditionExpression: 'username = :u',
     ExpressionAttributeValues: { ':u': username }
   }))
-  const user = result.Items?.[0]
+  const user = result.Items?.[0] as { id: string; username: string; passwordHash: string; usernameLower?: string } | undefined
   if (!user) {
     res.status(401).json({ error: 'Invalid credentials' })
     return
@@ -49,6 +49,15 @@ router.post('/login', async (req, res) => {
   if (!valid) {
     res.status(401).json({ error: 'Invalid credentials' })
     return
+  }
+  // Backfill usernameLower for existing users
+  if (!user.usernameLower) {
+    await ddb.send(new UpdateCommand({
+      TableName: USERS_TABLE,
+      Key: { id: user.id },
+      UpdateExpression: 'SET usernameLower = :ul',
+      ExpressionAttributeValues: { ':ul': user.username.toLowerCase() }
+    }))
   }
   res.json({ id: user.id, username: user.username, token: signToken(user.id) })
 })

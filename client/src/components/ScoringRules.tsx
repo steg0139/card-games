@@ -98,6 +98,32 @@ function getRules(config: GameConfig): RuleRow[] | null {
         { label: 'Phase 10', value: '1 set of 5 + 1 set of 3' },
       ]
 
+    case 'euchre':
+      return [
+        { label: 'Makers win 3–4 tricks',  value: '+1 (makers)' },
+        { label: 'Makers win all 5',        value: '+2 (makers)' },
+        { label: 'Loner wins 3–4 tricks',   value: '+1 (makers)' },
+        { label: 'Loner wins all 5',        value: '+4 (makers)' },
+        { label: 'Euchred',                 value: '+2 (defenders)' },
+        { label: 'Target score',            value: 10 },
+        { label: '─── Card Rank (trump) ───', value: '' },
+        { label: '1st',  value: 'Right bower (J of trump)' },
+        { label: '2nd',  value: 'Left bower (J of same color)' },
+        { label: '3rd+', value: 'A, K, Q, 10, 9' },
+      ]
+
+    case 'skyjo':
+      return [
+        { label: 'Card range',      value: '-2 to 12' },
+        { label: 'Grid',            value: '4 × 3 (12 cards)' },
+        { label: 'Lowest wins',     value: '✓' },
+        { label: 'Game ends at',    value: '100+ points' },
+        { label: '─── Double Rule ───', value: '' },
+        { label: 'Round-ender penalty', value: 'Score ×2 if not lowest that round' },
+        { label: '─── Column Rule ───', value: '' },
+        { label: '3 matching in column', value: 'Discard (score 0)' },
+      ]
+
     default:
       return null
   }

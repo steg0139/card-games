@@ -13,13 +13,21 @@ router.get('/search', async (req, res) => {
 
   const result = await ddb.send(new ScanCommand({
     TableName: USERS_TABLE,
-    FilterExpression: 'contains(usernameLower, :q) OR contains(username, :qOrig)',
-    ExpressionAttributeValues: { ':q': qLower, ':qOrig': q },
+    FilterExpression: 'contains(usernameLower, :q) OR contains(username, :qOrig) OR contains(username, :qLower)',
+    ExpressionAttributeValues: { ':q': qLower, ':qOrig': q, ':qLower': qLower },
     ProjectionExpression: 'id, username',
     Limit: 20
   }))
 
-  res.json(result.Items ?? [])
+  // Deduplicate by id
+  const seen = new Set<string>()
+  const items = (result.Items ?? []).filter(item => {
+    if (seen.has(item.id)) return false
+    seen.add(item.id)
+    return true
+  })
+
+  res.json(items)
 })
 
 export default router

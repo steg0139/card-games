@@ -131,6 +131,50 @@ export const GAME_CONFIGS: GameConfig[] = [
     }
   },
   {
+    id: 'skyjo',
+    name: 'Skyjo',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 8,
+    hasBidding: false,
+    hasRounds: true,
+    lowestScoreWins: true,
+    roundScoring: 'free',
+    customRules: {
+      description: 'Lowest score wins. Game ends when a player reaches 100+ points. If the player who ended the round doesn\'t have the lowest score that round, they double their points.',
+      targetScore: 100,
+      cardValues: {
+        min: -2,
+        max: 12,
+      },
+      doubleRule: 'If the round-ender does not have the lowest score, their round points are doubled.'
+    }
+  },
+  {
+    id: 'euchre',
+    name: 'Euchre',
+    playerMode: 'both',
+    minPlayers: 4,
+    maxPlayers: 4,
+    minTeams: 2,
+    maxTeams: 2,
+    hasBidding: true,
+    hasRounds: true,
+    lowestScoreWins: false,
+    roundScoring: 'bid-tricks',
+    customRules: {
+      description: 'Trick-taking game for 2 teams of 2. Makers must win 3+ tricks. First team to 10 points wins.',
+      targetScore: 10,
+      scoring: {
+        makers3or4Tricks: 1,
+        makersMarch: 2,
+        loner3or4Tricks: 1,
+        lonerMarch: 4,
+        euchred: 2,
+      }
+    }
+  },
+  {
     id: 'play-nine',
     name: 'Play Nine',
     playerMode: 'individual',

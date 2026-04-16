@@ -68,6 +68,7 @@ export default function PlayerInput({ value, onChange, placeholder = 'Player nam
         value={query}
         onChange={e => handleChange(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
         style={{ width: '100%' }}
       />
       {value.linkedUserId && (
