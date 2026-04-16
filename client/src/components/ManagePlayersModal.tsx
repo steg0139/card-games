@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { Game } from '@/types'
 import { useGame } from '@/context/GameContext'
-import { useAuth } from '@/context/AuthContext'
 import PlayerInput, { type LinkedPlayer } from '@/components/PlayerInput'
 
 interface Props {
@@ -11,24 +10,12 @@ interface Props {
 
 export default function ManagePlayersModal({ game, onClose }: Props) {
   const { addPlayer, removePlayer } = useGame()
-  const { user } = useAuth()
   const [newPlayer, setNewPlayer] = useState<LinkedPlayer>({ name: '' })
   const [startingScore, setStartingScore] = useState('0')
   const [position, setPosition] = useState<string>('')
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null)
 
   const hasOrdering = game.config.hasBidding
-
-  useEffect(() => {
-    if (searchQuery.length < 2) { setSearchResults([]); return }
-    const timeout = setTimeout(async () => {
-      try {
-        const res = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`)
-        setSearchResults(await res.json())
-      } catch { setSearchResults([]) }
-    }, 300)
-    return () => clearTimeout(timeout)
-  }, [searchQuery])
 
   const handleAdd = () => {
     if (!newPlayer.name.trim()) return
