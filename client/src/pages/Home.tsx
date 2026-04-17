@@ -1,15 +1,33 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useGame } from '@/context/GameContext'
 import { useAuth } from '@/context/AuthContext'
 import { GAME_CONFIGS } from '@/games/configs'
 import type { Game } from '@/types'
+import CardShuffle from '@/components/CardShuffle'
+import Confetti from '@/components/Confetti'
+import { useKonami } from '@/hooks/useEasterEggs'
 
 export default function Home() {
   const navigate = useNavigate()
   const { game, clearGame } = useGame()
   const { user, logout } = useAuth()
   const [activeForMe, setActiveForMe] = useState<Game[]>([])
+  const [shuffling, setShuffling] = useState(false)
+  const [konami, setKonami] = useState(false)
+  useKonami(() => setKonami(true))
+  const tapCount = useRef(0)
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleLogoTap = () => {
+    tapCount.current += 1
+    if (tapTimer.current) clearTimeout(tapTimer.current)
+    tapTimer.current = setTimeout(() => { tapCount.current = 0 }, 800)
+    if (tapCount.current >= 5) {
+      tapCount.current = 0
+      setShuffling(true)
+    }
+  }
 
   useEffect(() => {
     if (!user) return
@@ -23,8 +41,10 @@ export default function Home() {
 
   return (
     <div className="page">
+      {shuffling && <CardShuffle onDone={() => setShuffling(false)} />}
+      {konami && <Confetti onDone={() => setKonami(false)} />}
       <header className="app-header">
-        <h1>🃏 Card Game Score Tracker</h1>
+        <h1 onClick={handleLogoTap} style={{ cursor: 'default', userSelect: 'none' }}>🃏 Card Game Score Tracker</h1>
         <div className="header-actions">
           {user ? (
             <div className="user-info">

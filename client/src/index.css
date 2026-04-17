@@ -666,3 +666,98 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
   margin-left: 6px;
 }
 .skyjo-ender-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ── Easter egg: card shuffle ── */
+.card-shuffle-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: all;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.15);
+}
+.flying-card {
+  position: absolute;
+  font-size: 2.5rem;
+  opacity: 0;
+  animation: fly-card forwards ease-out;
+}
+@keyframes fly-card {
+  0%   { opacity: 0; transform: translate(-50%, 120vh) rotate(0deg); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -20vh) rotate(var(--rotation)); }
+}
+.shuffle-message {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  animation: pop-in 0.3s ease-out;
+}
+@keyframes pop-in {
+  0%   { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Easter eggs ── */
+.score-milestone {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  text-align: center;
+  padding: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  animation: pop-in 0.3s ease-out;
+}
+.long-game-warning {
+  background: #fff8e1;
+  color: #856404;
+  text-align: center;
+  padding: 6px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid #ffe082;
+}
+.confetti-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: all;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+.konami-message {
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 16px 28px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--primary);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  animation: pop-in 0.3s ease-out;
+  z-index: 1;
+}
