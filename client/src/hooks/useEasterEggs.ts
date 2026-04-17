@@ -24,7 +24,6 @@ export function useKonami(onActivate: () => void) {
 // Name easter eggs
 export const NAME_EGGS: Record<string, string> = {
   kris:          '🦖',
-  frank:         '💩',
   dealer:        '🎰',
   cheater:       '🕵️',
   josh:          '👑',
@@ -43,6 +42,9 @@ export const NAME_EGGS: Record<string, string> = {
   'fr paul':     '⛪',
   'fr.paul':     '⛪',
   'fr.':         '⛪',
+  isaac:         '🍩',
+  clare:         '🪿',
+  gianna:        '👩‍⚕️',
 }
 
 export function getNameEmoji(name: string): string | null {
