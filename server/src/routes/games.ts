@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { GetCommand, PutCommand, QueryCommand, DeleteCommand, UpdateCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
-import { ddb, GAMES_TABLE } from '../db'
+import { ddb, GAMES_TABLE, USERS_TABLE } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
 
 const router = Router()
@@ -19,6 +19,21 @@ router.post('/linked', async (req, res) => {
     TableName: GAMES_TABLE,
     Item: { id: game.id, userId, data: JSON.stringify(game), startedAt: game.startedAt, endedAt: game.endedAt }
   }))
+
+  // Send push notification to the linked user if they have a subscription
+  try {
+    const userResult = await ddb.send(new GetCommand({ TableName: USERS_TABLE, Key: { id: userId } }))
+    const sub = userResult.Item?.pushSubscription
+    if (sub) {
+      const { sendPush } = await import('../push.js')
+      await sendPush(sub, {
+        title: 'Card Score Tracker',
+        body: `A completed game of ${game.config?.name ?? 'cards'} has been added to your history!`,
+        url: `/history/${game.id}`
+      })
+    }
+  } catch { /* non-critical */ }
+
   res.json({ ok: true })
 })
 

@@ -61,7 +61,10 @@ export class CardScoreTrackerStack extends cdk.Stack {
         AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
         USERS_TABLE: usersTable.tableName,
         GAMES_TABLE: gamesTable.tableName,
-        JWT_SECRET: process.env.JWT_SECRET ?? 'change-me-in-production'
+        JWT_SECRET: process.env.JWT_SECRET ?? 'change-me-in-production',
+        VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY ?? '',
+        VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY ?? '',
+        VAPID_EMAIL: process.env.VAPID_EMAIL ?? 'mailto:admin@example.com',
       },
       timeout: cdk.Duration.seconds(30),
       memorySize: 256

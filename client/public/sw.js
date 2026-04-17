@@ -14,9 +14,7 @@ self.addEventListener('activate', e => {
 })
 
 self.addEventListener('fetch', e => {
-  // Only cache GET requests, skip API calls
   if (e.request.method !== 'GET' || e.request.url.includes('/api/')) return
-
   e.respondWith(
     caches.match(e.request).then(cached => {
       const network = fetch(e.request).then(res => {
@@ -24,6 +22,31 @@ self.addEventListener('fetch', e => {
         return res
       })
       return cached ?? network
+    })
+  )
+})
+
+self.addEventListener('push', e => {
+  if (!e.data) return
+  const data = e.data.json()
+  e.waitUntil(
+    self.registration.showNotification(data.title ?? 'Card Score Tracker', {
+      body: data.body,
+      icon: '/icon.svg',
+      badge: '/icon.svg',
+      data: { url: data.url ?? '/' }
+    })
+  )
+})
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close()
+  const url = e.notification.data?.url ?? '/'
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      const existing = clientList.find(c => c.url.includes(self.location.origin))
+      if (existing) { existing.focus(); existing.navigate(url) }
+      else clients.openWindow(url)
     })
   )
 })

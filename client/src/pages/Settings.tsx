@@ -4,12 +4,14 @@ import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/context/ThemeContext'
 import { usePreferences } from '@/context/PreferencesContext'
 import { GAME_CONFIGS } from '@/games/configs'
+import { usePushNotifications } from '@/hooks/usePushNotifications'
 
 export default function Settings() {
   const navigate = useNavigate()
   const { user, login, register, logout } = useAuth()
   const { theme, setTheme } = useTheme()
   const { getConfig, savePreference } = usePreferences()
+  const push = usePushNotifications()
 
   const [selectedPrefGame, setSelectedPrefGame] = useState('')
   const [prefRules, setPrefRules] = useState<Record<string, unknown>>({})
@@ -114,6 +116,29 @@ export default function Settings() {
           ))}
         </div>
       </section>
+
+      {/* Notifications */}
+      {user && push.isSupported && (
+        <section className="setup-section">
+          <h3>Notifications</h3>
+          <p className="muted" style={{ fontSize: '0.82rem' }}>
+            Get notified when you're added to a game or a game is saved to your history.
+          </p>
+          {push.permission === 'denied' ? (
+            <p className="muted" style={{ fontSize: '0.82rem' }}>
+              Notifications are blocked. Enable them in your browser settings.
+            </p>
+          ) : push.subscribed || push.permission === 'granted' ? (
+            <button className="btn-secondary" onClick={push.unsubscribe}>
+              Turn off notifications
+            </button>
+          ) : (
+            <button className="btn-primary" onClick={push.subscribe}>
+              Enable notifications
+            </button>
+          )}
+        </section>
+      )}
 
       {/* Game Defaults */}
       {user && (
