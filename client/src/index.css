@@ -576,6 +576,7 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
   border-radius: 8px;
   overflow: hidden;
   background: var(--surface);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .search-result-item {
   display: block;
@@ -586,9 +587,10 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
   border-radius: 0;
   border-bottom: 1px solid var(--border);
   font-size: 0.9rem;
+  color: var(--text);
 }
 .search-result-item:last-child { border-bottom: none; }
-.search-result-item:hover { background: var(--primary-light); }
+.search-result-item:hover { background: var(--primary-light); color: var(--primary-dark); }
 .linked-badge {
   font-size: 0.7rem;
   background: var(--primary-light);

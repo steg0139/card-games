@@ -39,6 +39,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
         body: JSON.stringify(g)
+      }).then(() => {
+        // Notify linked players after game is saved
+        const hasLinked = g.players.some(p => p.linkedUserId && p.linkedUserId !== user.id)
+        if (hasLinked) {
+          fetch(`/api/games/${g.id}/notify-start`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${user.token}` }
+          }).catch(console.error)
+        }
       }).catch(console.error)
     }
   }

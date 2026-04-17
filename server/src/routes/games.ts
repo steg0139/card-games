@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { GetCommand, PutCommand, QueryCommand, DeleteCommand, UpdateCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
 import { ddb, GAMES_TABLE, USERS_TABLE } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
+import { sendPush } from '../push'
 
 const router = Router()
 
@@ -25,13 +26,12 @@ router.post('/linked', async (req, res) => {
     const userResult = await ddb.send(new GetCommand({ TableName: USERS_TABLE, Key: { id: userId } }))
     const sub = userResult.Item?.pushSubscription
     if (sub) {
-      const { sendPush } = await import('../push.js')
-      await sendPush(sub, {
-        title: 'Card Score Tracker',
-        body: `A completed game of ${game.config?.name ?? 'cards'} has been added to your history!`,
-        url: `/history/${game.id}`
-      })
-    }
+        await sendPush(sub, {
+          title: 'Card Score Tracker',
+          body: `A completed game of ${game.config?.name ?? 'cards'} has been added to your history!`,
+          url: `/history/${game.id}`
+        })
+      }
   } catch { /* non-critical */ }
 
   res.json({ ok: true })
@@ -114,7 +114,31 @@ router.post('/:id/end', async (req: AuthRequest, res) => {
   res.json({ ok: true })
 })
 
-router.delete('/:id', async (req: AuthRequest, res) => {
+// Notify linked players that a game has started
+router.post('/:id/notify-start', async (req: AuthRequest, res) => {
+  const existing = await ddb.send(new GetCommand({ TableName: GAMES_TABLE, Key: { id: req.params.id } }))
+  if (!existing.Item || existing.Item.userId !== req.userId) {
+    res.status(404).json({ error: 'Game not found' }); return
+  }
+  const game = JSON.parse(existing.Item.data)
+  const linkedPlayers = (game.players ?? []).filter((p: any) => p.linkedUserId && p.linkedUserId !== req.userId)
+
+  for (const player of linkedPlayers) {
+    try {
+      const userResult = await ddb.send(new GetCommand({ TableName: USERS_TABLE, Key: { id: player.linkedUserId } }))
+      const sub = userResult.Item?.pushSubscription
+      if (sub) {
+        await sendPush(sub, {
+          title: `${game.config?.name ?? 'Card game'} started!`,
+          body: `${player.name}, you've been added to a game. Tap to watch live.`,
+          url: `/watch/${game.id}`
+        })
+      }
+    } catch { /* non-critical */ }
+  }
+
+  res.json({ ok: true })
+})
   const existing = await ddb.send(new GetCommand({ TableName: GAMES_TABLE, Key: { id: req.params.id } }))
   if (!existing.Item || existing.Item.userId !== req.userId) {
     res.status(404).json({ error: 'Game not found' }); return
