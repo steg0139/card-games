@@ -139,6 +139,8 @@ router.post('/:id/notify-start', async (req: AuthRequest, res) => {
 
   res.json({ ok: true })
 })
+
+router.delete('/:id', async (req: AuthRequest, res) => {
   const existing = await ddb.send(new GetCommand({ TableName: GAMES_TABLE, Key: { id: req.params.id } }))
   if (!existing.Item || existing.Item.userId !== req.userId) {
     res.status(404).json({ error: 'Game not found' }); return
