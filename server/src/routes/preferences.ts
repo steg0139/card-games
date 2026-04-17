@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
+import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import { ddb, USERS_TABLE } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
 
@@ -31,9 +31,11 @@ router.put('/', async (req: AuthRequest, res) => {
     [gameId]: { customRules, ...(targetScore !== undefined ? { targetScore } : {}) }
   }
 
-  await ddb.send(new PutCommand({
+  await ddb.send(new UpdateCommand({
     TableName: USERS_TABLE,
-    Item: { id: req.userId, ...result.Item, preferences: updated }
+    Key: { id: req.userId },
+    UpdateExpression: 'SET preferences = :prefs',
+    ExpressionAttributeValues: { ':prefs': updated }
   }))
 
   res.json({ ok: true })

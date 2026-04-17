@@ -15,6 +15,12 @@ export function usePushNotifications() {
 
   useEffect(() => {
     if ('Notification' in window) setPermission(Notification.permission)
+    // Check if already subscribed
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      navigator.serviceWorker.ready.then(reg =>
+        reg.pushManager.getSubscription().then(sub => setSubscribed(!!sub))
+      )
+    }
   }, [])
 
   const subscribe = async () => {
@@ -29,6 +35,7 @@ export function usePushNotifications() {
         headers: { Authorization: `Bearer ${user.token}` }
       })
       const { key } = await keyRes.json()
+      if (!key) { console.error('VAPID public key not configured'); return }
 
       const reg = await navigator.serviceWorker.ready
       const sub = await reg.pushManager.subscribe({

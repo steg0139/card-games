@@ -128,7 +128,7 @@ export default function Settings() {
             <p className="muted" style={{ fontSize: '0.82rem' }}>
               Notifications are blocked. Enable them in your browser settings.
             </p>
-          ) : push.subscribed || push.permission === 'granted' ? (
+          ) : push.subscribed ? (
             <button className="btn-secondary" onClick={push.unsubscribe}>
               Turn off notifications
             </button>

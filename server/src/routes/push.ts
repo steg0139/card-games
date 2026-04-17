@@ -4,6 +4,12 @@ import { ddb, USERS_TABLE } from '../db'
 import { requireAuth, type AuthRequest } from '../middleware/auth'
 
 const router = Router()
+
+// Get VAPID public key — no auth needed, it's a public key
+router.get('/vapid-public-key', (_req, res) => {
+  res.json({ key: process.env.VAPID_PUBLIC_KEY ?? '' })
+})
+
 router.use(requireAuth)
 
 // Save push subscription for this user
@@ -28,11 +34,6 @@ router.post('/unsubscribe', async (req: AuthRequest, res) => {
     UpdateExpression: 'REMOVE pushSubscription'
   }))
   res.json({ ok: true })
-})
-
-// Get VAPID public key (needed by client to subscribe)
-router.get('/vapid-public-key', (_req, res) => {
-  res.json({ key: process.env.VAPID_PUBLIC_KEY ?? '' })
 })
 
 export default router
