@@ -16,6 +16,34 @@
   font-size: 16px;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111111;
+    --surface: #1e1e1e;
+    --border: #2e2e2e;
+    --primary: #52b788;
+    --primary-dark: #2d6a4f;
+    --primary-light: #1b3a2a;
+    --danger: #e05c5c;
+    --text: #f0f0f0;
+    --muted: #9ca3af;
+    --shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #111111;
+  --surface: #1e1e1e;
+  --border: #2e2e2e;
+  --primary: #52b788;
+  --primary-dark: #2d6a4f;
+  --primary-light: #1b3a2a;
+  --danger: #e05c5c;
+  --text: #f0f0f0;
+  --muted: #9ca3af;
+  --shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg);
@@ -133,7 +161,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .game-card:hover { border-color: var(--primary); }
 .custom-game-card { border-style: dashed; color: var(--muted); }
 .custom-game-card:hover { border-color: var(--primary); color: var(--text); }
-.game-name { font-weight: 600; font-size: 1rem; }
+.game-name { font-weight: 600; font-size: 1rem; color: var(--text); }
 .game-meta { font-size: 0.78rem; color: var(--muted); }
 
 /* ── Auth ── */
@@ -774,3 +802,70 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
   transition: opacity 0.2s;
 }
 .hidden-chip:hover { opacity: 0.6; }
+
+/* ── PWA install banner ── */
+.install-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 0.85rem;
+}
+.install-banner span { flex: 1; }
+
+/* ── Stats banner ── */
+.stats-banner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  box-shadow: var(--shadow);
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 2px;
+}
+.stat-value { font-weight: 700; font-size: 1rem; color: var(--text); }
+.stat-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-divider { width: 1px; height: 36px; background: var(--border); }
+
+/* ── Gin Rummy ── */
+.gin-preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ── Nerts ── */
+.nerts-grid-header {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 60px;
+  gap: 6px 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 0 4px;
+}
+.nerts-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 60px;
+  gap: 6px 8px;
+  align-items: center;
+  padding: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.nerts-row:last-of-type { border-bottom: none; }
+.nerts-row input { text-align: center; padding: 8px 4px; }

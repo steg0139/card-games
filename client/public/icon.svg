@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#2d6a4f"/>
+  <!-- Card shape -->
+  <rect x="120" y="100" width="180" height="240" rx="18" fill="white" opacity="0.95"/>
+  <rect x="212" y="172" width="180" height="240" rx="18" fill="white" opacity="0.85"/>
+  <!-- Suit symbols -->
+  <text x="148" y="175" font-size="72" font-family="serif" fill="#c0392b">♥</text>
+  <text x="240" y="260" font-size="72" font-family="serif" fill="#1a1a1a">♠</text>
+  <!-- Score lines suggesting a scorecard -->
+  <line x1="148" y1="220" x2="268" y2="220" stroke="#e0e0d8" stroke-width="8" stroke-linecap="round"/>
+  <line x1="148" y1="248" x2="248" y2="248" stroke="#e0e0d8" stroke-width="8" stroke-linecap="round"/>
+</svg>

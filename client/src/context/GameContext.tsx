@@ -11,6 +11,7 @@ interface GameContextType {
   savePendingBids: (bids: Record<string, number | string> | null) => void
   addPlayer: (name: string, startingScore: number, position?: number, linkedUserId?: string) => void
   removePlayer: (playerId: string) => void
+  undoRound: () => void
 }
 
 const GameContext = createContext<GameContextType | null>(null)
@@ -189,8 +190,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const undoRound = () => {
+    if (!game || game.rounds.length === 0) return
+    const updated = { ...game, rounds: game.rounds.slice(0, -1) }
+    persist(updated)
+    if (user) {
+      fetch('/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        body: JSON.stringify(updated)
+      }).catch(console.error)
+    }
+  }
+
   return (
-    <GameContext.Provider value={{ game, startGame, addRound, endGame, clearGame, savePendingBids, addPlayer, removePlayer }}>
+    <GameContext.Provider value={{ game, startGame, addRound, endGame, clearGame, savePendingBids, addPlayer, removePlayer, undoRound }}>
       {children}
     </GameContext.Provider>
   )

@@ -67,9 +67,9 @@ export default function LogPastGame() {
 
     const entities = playerMode === 'teams' && teams.length ? teams : players
 
-    const roundScores: RoundScore[] = entities.map(e => ({
+    const roundScores: RoundScore[] = entities.map((e, i) => ({
       entityId: e.id,
-      score: Number(scores[e.id]) || 0
+      score: Number(scores[String(i)]) || 0
     }))
 
     const round: Round = {

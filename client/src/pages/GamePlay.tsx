@@ -8,7 +8,7 @@ import ScoringRules from '@/components/ScoringRules'
 import ManagePlayersModal from '@/components/ManagePlayersModal'
 
 export default function GamePlay() {
-  const { game, endGame, clearGame, savePendingBids } = useGame()
+  const { game, endGame, clearGame, savePendingBids, undoRound } = useGame()
   const navigate = useNavigate()
   const [enteringRound, setEnteringRound] = useState(false)
   const [showEndConfirm, setShowEndConfirm] = useState(false)
@@ -61,9 +61,14 @@ export default function GamePlay() {
 
       {!enteringRound ? (
         !isSingleRound && (
-          <button className="btn-primary full-width" onClick={() => setEnteringRound(true)}>
-            + Enter Round {game.rounds.length + 1}
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn-primary" style={{ flex: 1 }} onClick={() => setEnteringRound(true)}>
+              + Enter Round {game.rounds.length + 1}
+            </button>
+            {game.rounds.length > 0 && (
+              <button className="btn-ghost" onClick={undoRound} title="Undo last round">↩ Undo</button>
+            )}
+          </div>
         )
       ) : (
         <RoundEntry

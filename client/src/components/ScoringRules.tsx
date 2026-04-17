@@ -139,6 +139,36 @@ function getRules(config: GameConfig): RuleRow[] | null {
         { label: 'Nibs / Heels',     value: 2 },
       ]
 
+    case 'gin-rummy':
+      return [
+        { label: 'Win at',              value: 100 },
+        { label: 'Max knock deadwood',  value: 10 },
+        { label: '─── Hand Scoring ───', value: '' },
+        { label: 'Gin bonus',           value: 20 },
+        { label: 'Gin score',           value: 'Bonus + opponent deadwood' },
+        { label: 'Knock win',           value: 'Deadwood difference' },
+        { label: 'Undercut bonus',      value: 10 },
+        { label: '─── Game Bonuses ───', value: '' },
+        { label: 'Game bonus',          value: 100 },
+        { label: 'Box bonus (per hand)', value: 20 },
+        { label: 'Shutout bonus',       value: 100 },
+        { label: '─── Card Values ───', value: '' },
+        { label: 'Face cards (J/Q/K)',  value: 10 },
+        { label: 'Ace',                 value: 1 },
+        { label: 'Number cards',        value: 'Face value' },
+      ]
+
+    case 'nerts':
+      return [
+        { label: 'Win at',              value: 100 },
+        { label: 'Card played to foundation', value: '+1' },
+        { label: 'Card left in Nerts pile',   value: '-2' },
+        { label: '─── Notes ───',       value: '' },
+        { label: 'Nerts pile',          value: '13 cards' },
+        { label: 'Work piles',          value: '4 piles, descending alt. color' },
+        { label: 'Foundations',         value: 'Ace up to King, same suit' },
+      ]
+
     default:
       return null
   }

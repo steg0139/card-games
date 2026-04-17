@@ -131,6 +131,46 @@ export const GAME_CONFIGS: GameConfig[] = [
     }
   },
   {
+    id: 'nerts',
+    name: 'Nerts',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 8,
+    hasBidding: false,
+    hasRounds: true,
+    lowestScoreWins: false,
+    roundScoring: 'free',
+    customRules: {
+      description: 'Race to empty your Nerts pile. +1 per card played to foundations, -2 per card left in Nerts pile. First to 100 wins.',
+      targetScore: 100,
+      perCardPlayed: 1,
+      perCardLeft: -2,
+    }
+  },
+  {
+    id: 'gin-rummy',
+    name: 'Gin Rummy',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 2,
+    hasBidding: false,
+    hasRounds: true,
+    lowestScoreWins: false,
+    roundScoring: 'free',
+    customRules: {
+      description: 'First to 100 points wins. Score deadwood difference when knocking, or gin/undercut bonuses.',
+      targetScore: 100,
+      scoring: {
+        ginBonus: 20,
+        undercutBonus: 10,
+        gameBonus: 100,
+        boxBonus: 20,
+        shutoutBonus: 100,
+        knockMax: 10,
+      }
+    }
+  },
+  {
     id: 'cribbage',
     name: 'Cribbage',
     playerMode: 'individual',

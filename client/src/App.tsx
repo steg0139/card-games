@@ -10,6 +10,8 @@ import CustomGameSetup from '@/pages/CustomGameSetup'
 import LogPastGame from '@/pages/LogPastGame'
 import WatchGame from '@/pages/WatchGame'
 
+import Settings from '@/pages/Settings'
+
 export default function App() {
   return (
     <Routes>
@@ -23,6 +25,7 @@ export default function App() {
       <Route path="/history/:gameId" element={<GameDetail />} />
       <Route path="/log-past" element={<LogPastGame />} />
       <Route path="/watch/:gameId" element={<WatchGame />} />
+      <Route path="/settings" element={<Settings />} />
     </Routes>
   )
 }

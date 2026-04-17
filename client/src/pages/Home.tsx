@@ -16,7 +16,14 @@ export default function Home() {
   const [activeForMe, setActiveForMe] = useState<Game[]>([])
   const [shuffling, setShuffling] = useState(false)
   const [konami, setKonami] = useState(false)
+  const [installPrompt, setInstallPrompt] = useState<Event | null>(null)
   useKonami(() => setKonami(true))
+
+  useEffect(() => {
+    const handler = (e: Event) => { e.preventDefault(); setInstallPrompt(e) }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
   const tapCount = useRef(0)
   const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -45,17 +52,20 @@ export default function Home() {
       {shuffling && <CardShuffle onDone={() => setShuffling(false)} />}
       {konami && <Confetti onDone={() => setKonami(false)} />}
       <HiddenChip />
+      {installPrompt && (
+        <div className="install-banner">
+          <span>Add to your home screen for the best experience</span>
+          <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.85rem' }} onClick={() => {
+            (installPrompt as any).prompt()
+            setInstallPrompt(null)
+          }}>Install</button>
+          <button className="btn-ghost" style={{ padding: '6px 8px' }} onClick={() => setInstallPrompt(null)}>✕</button>
+        </div>
+      )}
       <header className="app-header">
         <h1 onClick={handleLogoTap} style={{ cursor: 'default', userSelect: 'none' }}>🃏 Card Game Score Tracker</h1>
         <div className="header-actions">
-          {user ? (
-            <div className="user-info">
-              <span>{user.username}</span>
-              <button className="btn-ghost" onClick={logout}>Sign out</button>
-            </div>
-          ) : (
-            <button className="btn-ghost" onClick={() => navigate('/auth')}>Sign in</button>
-          )}
+          <button className="btn-ghost" onClick={() => navigate('/settings')} aria-label="Settings">⚙️</button>
         </div>
       </header>
 
@@ -91,7 +101,7 @@ export default function Home() {
       <section className="game-list">
         <h2>Choose a Game</h2>
         <div className="game-grid">
-          {GAME_CONFIGS.map(config => (
+          {[...GAME_CONFIGS].sort((a, b) => a.name.localeCompare(b.name)).map(config => (
             <button
               key={config.id}
               className="game-card"

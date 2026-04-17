@@ -10,6 +10,8 @@ import PlayNineRoundEntry from './rounds/PlayNineRoundEntry'
 import Phase10RoundEntry from './rounds/Phase10RoundEntry'
 import EuchreRoundEntry from './rounds/EuchreRoundEntry'
 import SkyjoRoundEntry from './rounds/SkyjoRoundEntry'
+import GinRummyRoundEntry from './rounds/GinRummyRoundEntry'
+import NertsRoundEntry from './rounds/NertsRoundEntry'
 
 interface Props {
   game: Game
@@ -38,6 +40,8 @@ export default function RoundEntry({ game, onSave, onCancel, onComplete, onBidsC
     case 'phase-10': return <Phase10RoundEntry {...props} />
     case 'euchre':   return <EuchreRoundEntry {...props} />
     case 'skyjo':    return <SkyjoRoundEntry {...props} />
+    case 'gin-rummy': return <GinRummyRoundEntry {...props} />
+    case 'nerts':     return <NertsRoundEntry {...props} />
     default: return <FreeRoundEntry {...props} />
   }
 }
