@@ -761,3 +761,16 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
   animation: pop-in 0.3s ease-out;
   z-index: 1;
 }
+
+/* ── Hidden chip ── */
+.hidden-chip {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  opacity: 0.15;
+  cursor: pointer;
+  padding: 4px;
+  z-index: 50;
+  transition: opacity 0.2s;
+}
+.hidden-chip:hover { opacity: 0.6; }

@@ -6,6 +6,7 @@ import { GAME_CONFIGS } from '@/games/configs'
 import type { Game } from '@/types'
 import CardShuffle from '@/components/CardShuffle'
 import Confetti from '@/components/Confetti'
+import HiddenChip from '@/components/HiddenChip'
 import { useKonami } from '@/hooks/useEasterEggs'
 
 export default function Home() {
@@ -43,6 +44,7 @@ export default function Home() {
     <div className="page">
       {shuffling && <CardShuffle onDone={() => setShuffling(false)} />}
       {konami && <Confetti onDone={() => setKonami(false)} />}
+      <HiddenChip />
       <header className="app-header">
         <h1 onClick={handleLogoTap} style={{ cursor: 'default', userSelect: 'none' }}>🃏 Card Game Score Tracker</h1>
         <div className="header-actions">
