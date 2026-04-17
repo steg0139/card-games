@@ -1,14 +1,19 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '@/context/GameContext'
+import { useAuth } from '@/context/AuthContext'
 import type { Game } from '@/types'
 import Scoreboard from '@/components/Scoreboard'
 import RoundEntry from '@/components/RoundEntry'
 import ScoringRules from '@/components/ScoringRules'
 import ManagePlayersModal from '@/components/ManagePlayersModal'
+import LoginNudge from '@/components/LoginNudge'
+import { useLoginNudge } from '@/hooks/useLoginNudge'
 
 export default function GamePlay() {
   const { game, endGame, clearGame, savePendingBids, undoRound } = useGame()
+  const { user } = useAuth()
+  const nudge = useLoginNudge()
   const navigate = useNavigate()
   const [enteringRound, setEnteringRound] = useState(false)
   const [showEndConfirm, setShowEndConfirm] = useState(false)
@@ -29,6 +34,7 @@ export default function GamePlay() {
   }
 
   const handleEndGame = () => {
+    if (!user) nudge.show()
     endGame(endNote.trim() || undefined)
     setShowEndConfirm(false)
     navigate('/results')
@@ -92,6 +98,13 @@ export default function GamePlay() {
 
       {showManagePlayers && (
         <ManagePlayersModal game={game} onClose={() => setShowManagePlayers(false)} />
+      )}
+
+      {nudge.visible && !user && (
+        <LoginNudge
+          message="Sign in to save this game to your history and access it later."
+          onDismiss={nudge.dismiss}
+        />
       )}
 
       {showEndConfirm && (

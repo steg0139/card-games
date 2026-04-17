@@ -869,3 +869,6 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 }
 .nerts-row:last-of-type { border-bottom: none; }
 .nerts-row input { text-align: center; padding: 8px 4px; }
+
+/* ── Game defaults / preferences ── */
+.pref-rules { display: flex; flex-direction: column; gap: 10px; }

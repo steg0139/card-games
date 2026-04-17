@@ -7,7 +7,9 @@ import type { Game } from '@/types'
 import CardShuffle from '@/components/CardShuffle'
 import Confetti from '@/components/Confetti'
 import HiddenChip from '@/components/HiddenChip'
+import LoginNudge from '@/components/LoginNudge'
 import { useKonami } from '@/hooks/useEasterEggs'
+import { useLoginNudge } from '@/hooks/useLoginNudge'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -17,7 +19,13 @@ export default function Home() {
   const [shuffling, setShuffling] = useState(false)
   const [konami, setKonami] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null)
+  const nudge = useLoginNudge()
   useKonami(() => setKonami(true))
+
+  useEffect(() => {
+    // Show nudge on first visit if not logged in
+    if (!user) nudge.show()
+  }, [])
 
   useEffect(() => {
     const handler = (e: Event) => { e.preventDefault(); setInstallPrompt(e) }
@@ -51,6 +59,7 @@ export default function Home() {
     <div className="page">
       {shuffling && <CardShuffle onDone={() => setShuffling(false)} />}
       {konami && <Confetti onDone={() => setKonami(false)} />}
+      {nudge.visible && !user && <LoginNudge onDismiss={nudge.dismiss} />}
       <HiddenChip />
       {installPrompt && (
         <div className="install-banner">

@@ -2,11 +2,41 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/context/ThemeContext'
+import { usePreferences } from '@/context/PreferencesContext'
+import { GAME_CONFIGS } from '@/games/configs'
 
 export default function Settings() {
   const navigate = useNavigate()
   const { user, login, register, logout } = useAuth()
   const { theme, setTheme } = useTheme()
+  const { getConfig, savePreference } = usePreferences()
+
+  const [selectedPrefGame, setSelectedPrefGame] = useState('')
+  const [prefRules, setPrefRules] = useState<Record<string, unknown>>({})
+  const [prefTarget, setPrefTarget] = useState<string>('')
+  const [prefSaved, setPrefSaved] = useState(false)
+
+  const CONFIGURABLE_GAMES = GAME_CONFIGS.filter(g =>
+    ['hand-and-foot', 'wizard', '500', 'skyjo', 'nerts', 'gin-rummy', 'cribbage', 'euchre'].includes(g.id)
+  )
+
+  const handleSelectPrefGame = (gameId: string) => {
+    setSelectedPrefGame(gameId)
+    setPrefSaved(false)
+    if (!gameId) return
+    const cfg = getConfig(gameId)
+    setPrefRules({ ...(cfg.customRules as Record<string, unknown> ?? {}) })
+    setPrefTarget(cfg.targetScore ? String(cfg.targetScore) : '')
+  }
+
+  const handleSavePref = async () => {
+    if (!selectedPrefGame) return
+    await savePreference(selectedPrefGame, prefRules, prefTarget ? Number(prefTarget) : undefined)
+    setPrefSaved(true)
+    setTimeout(() => setPrefSaved(false), 2000)
+  }
+
+  const selectedPrefConfig = GAME_CONFIGS.find(g => g.id === selectedPrefGame)
 
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
   const [username, setUsername] = useState('')
@@ -84,6 +114,82 @@ export default function Settings() {
           ))}
         </div>
       </section>
+
+      {/* Game Defaults */}
+      {user && (
+        <section className="setup-section">
+          <h3>Game Defaults</h3>
+          <p className="muted" style={{ fontSize: '0.82rem' }}>Save your preferred rules for each game. These will be pre-filled when you start a new game.</p>
+          <select value={selectedPrefGame} onChange={e => handleSelectPrefGame(e.target.value)}>
+            <option value="">Select a game…</option>
+            {CONFIGURABLE_GAMES.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+          </select>
+
+          {selectedPrefGame && selectedPrefConfig && (
+            <div className="pref-rules">
+              {/* Target score */}
+              {(selectedPrefConfig.customRules as Record<string, unknown>)?.targetScore !== undefined && (
+                <label>
+                  Target Score
+                  <input type="number" value={prefTarget}
+                    onChange={e => setPrefTarget(e.target.value)} />
+                </label>
+              )}
+
+              {/* Hand & Foot specific */}
+              {selectedPrefGame === 'hand-and-foot' && (
+                <div className="hf-rules-grid">
+                  {([
+                    ['cleanBook',  'Clean Book'],
+                    ['dirtyBook',  'Dirty Book'],
+                    ['redThree',   'Red Three'],
+                    ['blackThree', 'Black Three'],
+                    ['goingOut',   'Going Out Bonus'],
+                  ] as [string, string][]).map(([key, label]) => (
+                    <label key={key}>
+                      {label}
+                      <input type="text" inputMode="numeric"
+                        value={String(prefRules[key] ?? '')}
+                        onChange={e => setPrefRules(r => ({ ...r, [key]: e.target.value === '' ? '' : Number(e.target.value) || e.target.value }))}
+                      />
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {/* Wizard specific */}
+              {selectedPrefGame === 'wizard' && (
+                <div className="hf-rules-grid">
+                  {([
+                    ['exactBidBonus',  'Exact Bid Bonus'],
+                    ['perTrickScore',  'Per Trick (made)'],
+                    ['perTrickPenalty','Per Trick (miss)'],
+                  ] as [string, string][]).map(([key, label]) => (
+                    <label key={key}>
+                      {label}
+                      <input type="number" inputMode="numeric"
+                        value={String(prefRules[key] ?? '')}
+                        onChange={e => setPrefRules(r => ({ ...r, [key]: Number(e.target.value) }))}
+                      />
+                    </label>
+                  ))}
+                  <label className="checkbox-label full-span">
+                    <input type="checkbox"
+                      checked={!!prefRules.noEvenBids}
+                      onChange={e => setPrefRules(r => ({ ...r, noEvenBids: e.target.checked }))}
+                    />
+                    Screw the dealer
+                  </label>
+                </div>
+              )}
+
+              <button className="btn-primary" onClick={handleSavePref}>
+                {prefSaved ? '✓ Saved!' : 'Save Defaults'}
+              </button>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Auth */}
       {!user ? (

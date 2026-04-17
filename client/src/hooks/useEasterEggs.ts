@@ -29,6 +29,7 @@ export const NAME_EGGS: Record<string, string> = {
   josh:          '👑',
   anna:          '👻',
   megan:         '👑',
+  meg:           '👑',
   gabby:         '💬',
   johnny:        '🏈',
   mason:         '🐶',

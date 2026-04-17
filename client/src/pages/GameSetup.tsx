@@ -3,8 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getGameConfig } from '@/games/configs'
 import { useGame } from '@/context/GameContext'
 import { useAuth } from '@/context/AuthContext'
+import { usePreferences } from '@/context/PreferencesContext'
 import type { Game, Player, Team, PlayerMode, GameConfig } from '@/types'
 import PlayerInput, { type LinkedPlayer } from '@/components/PlayerInput'
+import LoginNudge from '@/components/LoginNudge'
+import { useLoginNudge } from '@/hooks/useLoginNudge'
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10)
@@ -16,8 +19,10 @@ export default function GameSetup() {
   const navigate = useNavigate()
   const { startGame } = useGame()
   const { user } = useAuth()
+  const { getConfig } = usePreferences()
+  const nudge = useLoginNudge()
 
-  const [config, setConfig] = useState<GameConfig>(baseConfig ? { ...baseConfig } : {} as GameConfig)
+  const [config, setConfig] = useState<GameConfig>(baseConfig ? getConfig(gameId!) : {} as GameConfig)
   const [playerMode, setPlayerMode] = useState<PlayerMode>('individual')
   const [playerNames, setPlayerNames] = useState<LinkedPlayer[]>([{ name: '' }, { name: '' }])
   const [teamNames, setTeamNames] = useState<string[]>(['Team 1', 'Team 2'])
@@ -194,9 +199,18 @@ export default function GameSetup() {
         )}
       </section>
 
-      <button className="btn-primary full-width" onClick={handleStart} disabled={!canStart}>
+      <button className="btn-primary full-width" onClick={() => {
+        if (!user) nudge.show()
+        handleStart()
+      }} disabled={!canStart}>
         Start Game
       </button>
+      {nudge.visible && !user && (
+        <LoginNudge
+          message="Sign in to save this game to your history and track your stats."
+          onDismiss={nudge.dismiss}
+        />
+      )}
     </div>
   )
 }
