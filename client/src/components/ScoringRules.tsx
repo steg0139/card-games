@@ -169,6 +169,17 @@ function getRules(config: GameConfig): RuleRow[] | null {
         { label: 'Foundations',         value: 'Ace up to King, same suit' },
       ]
 
+    case 'mexican-train': {
+      const doubleSet = (r.doubleSet as number) ?? 9
+      return [
+        { label: 'Double set',          value: `Double-${doubleSet}` },
+        { label: 'Total rounds',        value: doubleSet + 1 },
+        { label: 'Scoring',             value: 'Pips remaining in hand' },
+        { label: 'Double-blank',        value: (r.doubleBlankValue as number) === 0 ? '0 pts' : `${r.doubleBlankValue} pts` },
+        { label: 'Lowest score wins',   value: '✓' },
+      ]
+    }
+
     default:
       return null
   }

@@ -155,6 +155,33 @@ export default function GameSetup() {
                 />
               </label>
             )}
+            {config.id === 'mexican-train' && (() => {
+              const r = config.customRules as Record<string, number>
+              return (
+                <div className="hf-rules-grid">
+                  <label>
+                    Double set
+                    <select
+                      value={r.doubleSet ?? 9}
+                      onChange={e => setConfig(c => ({ ...c, customRules: { ...c.customRules, doubleSet: Number(e.target.value) } }))}
+                    >
+                      {[6, 9, 12, 15].map(n => (
+                        <option key={n} value={n}>Double-{n} ({n + 1} rounds)</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Double-blank value
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      value={r.doubleBlankValue ?? 0}
+                      onChange={e => setConfig(c => ({ ...c, customRules: { ...c.customRules, doubleBlankValue: Number(e.target.value) } }))}
+                    />
+                  </label>
+                </div>
+              )
+            })()}
             {config.id === 'wizard' && (
               <label className="checkbox-label">
                 <input

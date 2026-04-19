@@ -81,6 +81,24 @@ export function GameProvider({ children }: { children: ReactNode }) {
       }).catch(console.error)
     }
 
+    // Auto-end Mexican Train after all rounds
+    if (updated.config.id === 'mexican-train') {
+      const doubleSet = (updated.config.customRules as Record<string, number>)?.doubleSet ?? 9
+      const totalRounds = doubleSet + 1
+      if (updated.rounds.length >= totalRounds) {
+        const ended = { ...updated, endedAt: Date.now() }
+        persist(ended)
+        if (user) {
+          fetch('/api/games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+            body: JSON.stringify(ended)
+          }).catch(console.error)
+        }
+        return ended
+      }
+    }
+
     // Auto-end if a target score has been reached
     const target = updated.config.targetScore
       ?? (updated.config.customRules as Record<string, unknown>)?.targetScore as number | undefined

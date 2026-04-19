@@ -131,6 +131,22 @@ export const GAME_CONFIGS: GameConfig[] = [
     }
   },
   {
+    id: 'mexican-train',
+    name: 'Mexican Train',
+    playerMode: 'individual',
+    minPlayers: 2,
+    maxPlayers: 8,
+    hasBidding: false,
+    hasRounds: true,
+    lowestScoreWins: true,
+    roundScoring: 'free',
+    customRules: {
+      description: 'Score the pips on remaining dominoes each round. Lowest total score wins after all rounds.',
+      doubleSet: 9,        // double-9 = 10 rounds, double-12 = 13 rounds
+      doubleBlankValue: 0, // some play double-blank as 50
+    }
+  },
+  {
     id: 'nerts',
     name: 'Nerts',
     playerMode: 'individual',

@@ -19,7 +19,7 @@ export default function Settings() {
   const [prefSaved, setPrefSaved] = useState(false)
 
   const CONFIGURABLE_GAMES = GAME_CONFIGS.filter(g =>
-    ['hand-and-foot', 'wizard', '500', 'skyjo', 'nerts', 'gin-rummy', 'cribbage', 'euchre'].includes(g.id)
+    ['hand-and-foot', 'wizard', '500', 'skyjo', 'nerts', 'gin-rummy', 'cribbage', 'euchre', 'mexican-train'].includes(g.id)
   )
 
   const handleSelectPrefGame = (gameId: string) => {
@@ -204,6 +204,30 @@ export default function Settings() {
                       onChange={e => setPrefRules(r => ({ ...r, noEvenBids: e.target.checked }))}
                     />
                     Screw the dealer
+                  </label>
+                </div>
+              )}
+
+              {/* Mexican Train specific */}
+              {selectedPrefGame === 'mexican-train' && (
+                <div className="hf-rules-grid">
+                  <label>
+                    Double set
+                    <select
+                      value={String(prefRules.doubleSet ?? 9)}
+                      onChange={e => setPrefRules(r => ({ ...r, doubleSet: Number(e.target.value) }))}
+                    >
+                      {[6, 9, 12, 15].map(n => (
+                        <option key={n} value={n}>Double-{n} ({n + 1} rounds)</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Double-blank value
+                    <input type="number" inputMode="numeric"
+                      value={String(prefRules.doubleBlankValue ?? 0)}
+                      onChange={e => setPrefRules(r => ({ ...r, doubleBlankValue: Number(e.target.value) }))}
+                    />
                   </label>
                 </div>
               )}

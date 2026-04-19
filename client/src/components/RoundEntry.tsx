@@ -12,6 +12,7 @@ import EuchreRoundEntry from './rounds/EuchreRoundEntry'
 import SkyjoRoundEntry from './rounds/SkyjoRoundEntry'
 import GinRummyRoundEntry from './rounds/GinRummyRoundEntry'
 import NertsRoundEntry from './rounds/NertsRoundEntry'
+import MexicanTrainRoundEntry from './rounds/MexicanTrainRoundEntry'
 
 interface Props {
   game: Game
@@ -41,7 +42,8 @@ export default function RoundEntry({ game, onSave, onCancel, onComplete, onBidsC
     case 'euchre':   return <EuchreRoundEntry {...props} />
     case 'skyjo':    return <SkyjoRoundEntry {...props} />
     case 'gin-rummy': return <GinRummyRoundEntry {...props} />
-    case 'nerts':     return <NertsRoundEntry {...props} />
+    case 'nerts':          return <NertsRoundEntry {...props} />
+    case 'mexican-train':  return <MexicanTrainRoundEntry {...props} />
     default: return <FreeRoundEntry {...props} />
   }
 }
