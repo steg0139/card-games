@@ -35,7 +35,7 @@ export default function PlayerInput({ value, onChange, placeholder = 'Player nam
   }, [])
 
   useEffect(() => {
-    if (!user || query.length < 2) { setResults([]); return }
+    if (!user || query.length < 2 || value.linkedUserId) { setResults([]); return }
     cancelRef.current = false
     const timeout = setTimeout(async () => {
       if (cancelRef.current) return

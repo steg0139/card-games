@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useGame } from '@/context/GameContext'
 import { useAuth } from '@/context/AuthContext'
 import type { Game, Player, GameConfig } from '@/types'
+import PlayerInput, { type LinkedPlayer } from '@/components/PlayerInput'
 import AppHeader from '@/components/AppHeader'
 
 function generateId() {
@@ -16,12 +17,15 @@ export default function CustomGameSetup() {
 
   const [gameName, setGameName] = useState('')
   const [lowestWins, setLowestWins] = useState(false)
-  const [playerNames, setPlayerNames] = useState<string[]>(['', ''])
+  const [playerNames, setPlayerNames] = useState<LinkedPlayer[]>(() => [
+    user ? { name: user.username, linkedUserId: user.id } : { name: '' },
+    { name: '' }
+  ])
 
-  const validPlayers = playerNames.filter(n => n.trim())
+  const validPlayers = playerNames.filter(n => n.name.trim())
   const canStart = gameName.trim().length > 0 && validPlayers.length >= 2
 
-  const addPlayer = () => setPlayerNames(p => [...p, ''])
+  const addPlayer = () => setPlayerNames(p => [...p, { name: '' }])
   const removePlayer = (i: number) => setPlayerNames(p => p.filter((_, idx) => idx !== i))
 
   const handleStart = async () => {
@@ -37,7 +41,11 @@ export default function CustomGameSetup() {
       roundScoring: 'free'
     }
 
-    const players: Player[] = validPlayers.map(name => ({ id: generateId(), name }))
+    const players: Player[] = validPlayers.map(p => ({
+      id: generateId(),
+      name: p.name.trim(),
+      ...(p.linkedUserId ? { linkedUserId: p.linkedUserId } : {})
+    }))
 
     const game: Game = {
       id: generateId(),
@@ -84,13 +92,12 @@ export default function CustomGameSetup() {
 
       <section className="setup-section">
         <h3>Players</h3>
-        {playerNames.map((name, i) => (
+        {playerNames.map((player, i) => (
           <div key={i} className="player-row">
-            <input
-              type="text"
+            <PlayerInput
+              value={player}
+              onChange={p => setPlayerNames(arr => arr.map((n, idx) => idx === i ? p : n))}
               placeholder={`Player ${i + 1}`}
-              value={name}
-              onChange={e => setPlayerNames(p => p.map((n, idx) => idx === i ? e.target.value : n))}
             />
             {playerNames.length > 2 && (
               <button className="btn-icon" onClick={() => removePlayer(i)} aria-label="Remove player">✕</button>

@@ -25,7 +25,10 @@ export default function GameSetup() {
 
   const [config, setConfig] = useState<GameConfig>(baseConfig ? getConfig(gameId!) : {} as GameConfig)
   const [playerMode, setPlayerMode] = useState<PlayerMode>('individual')
-  const [playerNames, setPlayerNames] = useState<LinkedPlayer[]>([{ name: '' }, { name: '' }])
+  const [playerNames, setPlayerNames] = useState<LinkedPlayer[]>(() => [
+    user ? { name: user.username, linkedUserId: user.id } : { name: '' },
+    { name: '' }
+  ])
   const [teamNames, setTeamNames] = useState<string[]>(['Team 1', 'Team 2'])
   const [teamAssignments, setTeamAssignments] = useState<Record<string, string>>({})
   const [showRules, setShowRules] = useState(false)
