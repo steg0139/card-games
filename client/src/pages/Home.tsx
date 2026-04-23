@@ -10,6 +10,7 @@ import HiddenChip from '@/components/HiddenChip'
 import LoginNudge from '@/components/LoginNudge'
 import { useKonami } from '@/hooks/useEasterEggs'
 import { useLoginNudge } from '@/hooks/useLoginNudge'
+import { usePreferences } from '@/context/PreferencesContext'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -20,6 +21,7 @@ export default function Home() {
   const [konami, setKonami] = useState(false)
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null)
   const nudge = useLoginNudge()
+  const { favorites, toggleFavorite } = usePreferences()
   useKonami(() => setKonami(true))
 
   useEffect(() => {
@@ -110,13 +112,31 @@ export default function Home() {
       <section className="game-list">
         <h2>Choose a Game</h2>
         <div className="game-grid">
-          {[...GAME_CONFIGS].sort((a, b) => a.name.localeCompare(b.name)).map(config => (
+          {[...GAME_CONFIGS]
+            .sort((a, b) => {
+              const aFav = favorites.includes(a.id) ? 0 : 1
+              const bFav = favorites.includes(b.id) ? 0 : 1
+              if (aFav !== bFav) return aFav - bFav
+              return a.name.localeCompare(b.name)
+            })
+            .map(config => (
             <button
               key={config.id}
-              className="game-card"
+              className={`game-card ${favorites.includes(config.id) ? 'game-card-fav' : ''}`}
               onClick={() => navigate(`/setup/${config.id}`)}
             >
-              <span className="game-name">{config.name}</span>
+              <div className="game-card-header">
+                <span className="game-name">{config.name}</span>
+                {user && (
+                  <button
+                    className="btn-icon fav-btn"
+                    onClick={e => { e.stopPropagation(); toggleFavorite(config.id) }}
+                    aria-label={favorites.includes(config.id) ? 'Unfavorite' : 'Favorite'}
+                  >
+                    {favorites.includes(config.id) ? '★' : '☆'}
+                  </button>
+                )}
+              </div>
               <span className="game-meta">
                 {config.minPlayers}–{config.maxPlayers} players
                 {config.playerMode === 'both' ? ' · teams or solo' : ''}

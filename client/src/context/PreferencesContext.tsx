@@ -9,6 +9,8 @@ interface PreferencesContextType {
   getConfig: (gameId: string) => GameConfig
   savePreference: (gameId: string, customRules: Record<string, unknown>, targetScore?: number) => Promise<void>
   prefs: GamePrefs
+  favorites: string[]
+  toggleFavorite: (gameId: string) => Promise<void>
 }
 
 const PreferencesContext = createContext<PreferencesContextType | null>(null)
@@ -16,6 +18,7 @@ const PreferencesContext = createContext<PreferencesContextType | null>(null)
 export function PreferencesProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const [prefs, setPrefs] = useState<GamePrefs>({})
+  const [favorites, setFavorites] = useState<string[]>([])
 
   useEffect(() => {
     if (!user) { setPrefs({}); return }
@@ -23,7 +26,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       headers: { Authorization: `Bearer ${user.token}` }
     })
       .then(r => r.json())
-      .then(setPrefs)
+      .then(data => {
+        setPrefs(data)
+        setFavorites(data.__favorites ?? [])
+      })
       .catch(console.error)
   }, [user])
 
@@ -50,8 +56,21 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     })
   }
 
+  const toggleFavorite = async (gameId: string) => {
+    if (!user) return
+    const updated = favorites.includes(gameId)
+      ? favorites.filter(id => id !== gameId)
+      : [...favorites, gameId]
+    setFavorites(updated)
+    await fetch('/api/preferences', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+      body: JSON.stringify({ gameId: '__favorites', customRules: { list: updated } })
+    })
+  }
+
   return (
-    <PreferencesContext.Provider value={{ getConfig, savePreference, prefs }}>
+    <PreferencesContext.Provider value={{ getConfig, savePreference, prefs, favorites, toggleFavorite }}>
       {children}
     </PreferencesContext.Provider>
   )
