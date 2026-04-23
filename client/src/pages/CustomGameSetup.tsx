@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useGame } from '@/context/GameContext'
 import { useAuth } from '@/context/AuthContext'
 import type { Game, Player, GameConfig } from '@/types'
+import AppHeader from '@/components/AppHeader'
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10)
@@ -55,6 +56,7 @@ export default function CustomGameSetup() {
 
   return (
     <div className="page">
+      <AppHeader />
       <button className="btn-ghost back-btn" onClick={() => navigate('/')}>← Back</button>
       <h2>Custom Game</h2>
 

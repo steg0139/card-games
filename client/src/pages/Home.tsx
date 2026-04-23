@@ -135,6 +135,27 @@ export default function Home() {
           View Game History
         </button>
       )}
+
+      <button
+        className="btn-ghost full-width"
+        style={{ fontSize: '0.85rem', color: 'var(--muted)' }}
+        onClick={async () => {
+          const url = window.location.origin
+          const shareData = {
+            title: 'Card Game Score Tracker',
+            text: 'Track scores for all your card games!',
+            url
+          }
+          if (navigator.share) {
+            try { await navigator.share(shareData) } catch { /* dismissed */ }
+          } else {
+            await navigator.clipboard.writeText(url)
+            alert('Link copied to clipboard!')
+          }
+        }}
+      >
+        🔗 Share this app
+      </button>
     </div>
   )
 }

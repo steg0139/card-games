@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '@/context/GameContext'
 import Scoreboard from '@/components/Scoreboard'
+import AppHeader from '@/components/AppHeader'
 
 export default function Results() {
   const { game, clearGame } = useGame()
@@ -30,6 +31,7 @@ export default function Results() {
 
   return (
     <div className="page">
+      <AppHeader />
       <div className="results-header">
         <h2>Game Over</h2>
         {isCooperative

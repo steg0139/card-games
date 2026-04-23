@@ -8,6 +8,7 @@ import type { Game, Player, Team, PlayerMode, GameConfig } from '@/types'
 import PlayerInput, { type LinkedPlayer } from '@/components/PlayerInput'
 import LoginNudge from '@/components/LoginNudge'
 import { useLoginNudge } from '@/hooks/useLoginNudge'
+import AppHeader from '@/components/AppHeader'
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10)
@@ -73,6 +74,7 @@ export default function GameSetup() {
 
   return (
     <div className="page">
+      <AppHeader />
       <button className="btn-ghost back-btn" onClick={() => navigate('/')}>← Back</button>
       <h2>Set Up {config.name}</h2>
 

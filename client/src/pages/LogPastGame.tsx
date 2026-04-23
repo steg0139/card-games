@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { GAME_CONFIGS } from '@/games/configs'
 import type { Game, Player, Team, PlayerMode, RoundScore, Round } from '@/types'
+import AppHeader from '@/components/AppHeader'
 
 function generateId() {
   return Math.random().toString(36).slice(2, 10)
@@ -107,6 +108,7 @@ export default function LogPastGame() {
 
   return (
     <div className="page">
+      <AppHeader />
       <button className="btn-ghost back-btn" onClick={() => navigate('/history')}>← Back</button>
       <h2>Log Past Game</h2>
 

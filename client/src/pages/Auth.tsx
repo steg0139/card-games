@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import AppHeader from '@/components/AppHeader'
 
 export default function Auth() {
   const [mode, setMode] = useState<'login' | 'register'>('login')
@@ -28,6 +29,7 @@ export default function Auth() {
 
   return (
     <div className="page centered">
+      <AppHeader />
       <div className="auth-card">
         <h2>{mode === 'login' ? 'Sign In' : 'Create Account'}</h2>
         <form onSubmit={submit} className="form">

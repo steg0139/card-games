@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import type { Game } from '@/types'
+import AppHeader from '@/components/AppHeader'
 
 export default function GameDetail() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -41,6 +42,7 @@ export default function GameDetail() {
 
   return (
     <div className="page">
+      <AppHeader />
       <button className="btn-ghost back-btn" onClick={() => navigate('/history')}>← History</button>
 
       <div className="detail-header">

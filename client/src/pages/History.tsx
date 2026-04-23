@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { GAME_CONFIGS } from '@/games/configs'
 import type { Game } from '@/types'
+import AppHeader from '@/components/AppHeader'
 
 function getWinner(g: Game): string | null {
   const entities = g.playerMode === 'teams' ? g.teams : g.players
@@ -94,6 +95,7 @@ export default function History() {
 
   return (
     <div className="page">
+      <AppHeader />
       <button className="btn-ghost back-btn" onClick={() => navigate('/')}>← Back</button>
       <div className="history-title-row">
         <h2>Game History</h2>

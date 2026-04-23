@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import type { Game } from '@/types'
 import Scoreboard from '@/components/Scoreboard'
 import ScoringRules from '@/components/ScoringRules'
+import AppHeader from '@/components/AppHeader'
 
 export default function WatchGame() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -44,6 +45,7 @@ export default function WatchGame() {
 
   return (
     <div className="page">
+      <AppHeader />
       <div className="watch-header">
         <div>
           <h2>{game.config.name}</h2>

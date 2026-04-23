@@ -5,6 +5,7 @@ import { useTheme } from '@/context/ThemeContext'
 import { usePreferences } from '@/context/PreferencesContext'
 import { GAME_CONFIGS } from '@/games/configs'
 import { usePushNotifications } from '@/hooks/usePushNotifications'
+import AppHeader from '@/components/AppHeader'
 
 export default function Settings() {
   const navigate = useNavigate()
@@ -102,6 +103,7 @@ export default function Settings() {
 
   return (
     <div className="page">
+      <AppHeader />
       <button className="btn-ghost back-btn" onClick={() => navigate('/')}>← Back</button>
       <h2>Settings</h2>
 
