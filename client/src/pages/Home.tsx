@@ -114,15 +114,16 @@ export default function Home() {
         <div className="game-grid">
           {[...GAME_CONFIGS]
             .sort((a, b) => {
-              const aFav = favorites.includes(a.id) ? 0 : 1
-              const bFav = favorites.includes(b.id) ? 0 : 1
+              const favList = Array.isArray(favorites) ? favorites : []
+              const aFav = favList.includes(a.id) ? 0 : 1
+              const bFav = favList.includes(b.id) ? 0 : 1
               if (aFav !== bFav) return aFav - bFav
               return a.name.localeCompare(b.name)
             })
             .map(config => (
             <button
               key={config.id}
-              className={`game-card ${favorites.includes(config.id) ? 'game-card-fav' : ''}`}
+              className={`game-card ${Array.isArray(favorites) && favorites.includes(config.id) ? 'game-card-fav' : ''}`}
               onClick={() => navigate(`/setup/${config.id}`)}
             >
               <div className="game-card-header">
@@ -131,9 +132,9 @@ export default function Home() {
                   <button
                     className="btn-icon fav-btn"
                     onClick={e => { e.stopPropagation(); toggleFavorite(config.id) }}
-                    aria-label={favorites.includes(config.id) ? 'Unfavorite' : 'Favorite'}
+                    aria-label={Array.isArray(favorites) && favorites.includes(config.id) ? 'Unfavorite' : 'Favorite'}
                   >
-                    {favorites.includes(config.id) ? '★' : '☆'}
+                    {Array.isArray(favorites) && favorites.includes(config.id) ? '★' : '☆'}
                   </button>
                 )}
               </div>

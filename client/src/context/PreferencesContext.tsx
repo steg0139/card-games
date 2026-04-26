@@ -28,7 +28,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       .then(r => r.json())
       .then(data => {
         setPrefs(data)
-        setFavorites(data.__favorites ?? [])
+        const favData = data.__favorites
+        setFavorites(Array.isArray(favData) ? favData : (favData?.customRules?.list ?? []))
       })
       .catch(console.error)
   }, [user])
