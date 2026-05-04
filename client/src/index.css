@@ -892,3 +892,47 @@ textarea:focus { outline: 2px solid var(--primary); border-color: transparent; }
 
 /* ── Game defaults / preferences ── */
 .pref-rules { display: flex; flex-direction: column; gap: 10px; }
+
+/* ── Cribbage peg entry ── */
+.crib-score-badge {
+  background: rgba(255,255,255,0.25);
+  border-radius: 10px;
+  padding: 1px 6px;
+  font-size: 0.78rem;
+  margin-left: 6px;
+}
+.crib-totals { display: flex; flex-direction: column; gap: 4px; }
+.crib-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  font-size: 0.9rem;
+}
+.crib-total-row.active { background: var(--primary-light); font-weight: 600; }
+.crib-peg-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.crib-peg-btn {
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  padding: 10px 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.crib-peg-btn:hover { background: var(--primary-dark); }
+.crib-peg-btn.subtract {
+  background: var(--bg);
+  color: var(--danger);
+  border: 1px solid var(--border);
+}
+.crib-peg-btn.subtract:hover { background: #fde8e8; }
+.crib-subtract-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
