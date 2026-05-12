@@ -46,17 +46,28 @@ function calcHoleScore(grid: Grid): { score: number; breakdown: string } {
 
   totalScore = columnScores.reduce((s, v) => s + v, 0)
 
-  // Matching bonus only applies to non-Hole-in-One matched columns
-  const bonusEligibleMatches = Array.from({ length: 4 }, (_, col) => {
+  // Matching bonus only applies to consecutive same-value matched columns
+  // Group matched columns by their value
+  const matchedValues: number[] = []
+  for (let col = 0; col < 4; col++) {
     const top = vals[col]
     const bot = vals[col + 4]
-    return top !== null && bot !== null && top === bot && top !== -5
-  }).filter(Boolean).length
+    if (top !== null && bot !== null && top === bot && top !== -5) {
+      matchedValues.push(top)
+    }
+  }
+
+  // Count groups of same-value matches
+  const valueCounts: Record<number, number> = {}
+  for (const v of matchedValues) valueCounts[v] = (valueCounts[v] ?? 0) + 1
 
   let bonus = 0
-  if (bonusEligibleMatches === 4) bonus = -20
-  else if (bonusEligibleMatches === 3) bonus = -15
-  else if (bonusEligibleMatches === 2) bonus = -10
+  for (const count of Object.values(valueCounts)) {
+    if (count === 4) bonus += -20
+    else if (count === 3) bonus += -15
+    else if (count === 2) bonus += -10
+    // count === 1 means just a single pair, no bonus
+  }
 
   // Four Hole-in-One bonus: 2 HiO matched columns = extra -10
   const hioMatches = Array.from({ length: 4 }, (_, col) => {
@@ -69,7 +80,9 @@ function calcHoleScore(grid: Grid): { score: number; breakdown: string } {
   totalScore += bonus
 
   const parts = []
-  if (bonusEligibleMatches > 0) parts.push(`${bonusEligibleMatches * 2} matching → ${bonus < 0 ? bonus : 0} bonus`)
+  for (const [val, count] of Object.entries(valueCounts)) {
+    if (count >= 2) parts.push(`${count * 2} matching ${val}s → ${count === 4 ? -20 : count === 3 ? -15 : -10} bonus`)
+  }
   if (hioMatches >= 2) parts.push(`${hioMatches * 2} Hole-in-One matches → -10 bonus`)
   const breakdown = parts.join(', ')
 
@@ -79,8 +92,12 @@ function calcHoleScore(grid: Grid): { score: number; breakdown: string } {
 export default function PlayNineRoundEntry({ game, onSave, onCancel }: Props) {
   const holeNum = game.rounds.length + 1
   const { players } = game
+  const [mode, setMode] = useState<'grid' | 'free'>('grid')
   const [grids, setGrids] = useState<Record<string, Grid>>(
     Object.fromEntries(players.map(p => [p.id, emptyGrid()]))
+  )
+  const [freeScores, setFreeScores] = useState<Record<string, string>>(
+    Object.fromEntries(players.map(p => [p.id, '']))
   )
 
   const setCell = (playerId: string, idx: number, val: string) => {
@@ -93,18 +110,53 @@ export default function PlayNineRoundEntry({ game, onSave, onCancel }: Props) {
 
   const handleSave = () => {
     const scores: RoundScore[] = players.map(p => {
+      if (mode === 'free') return { entityId: p.id, score: Number(freeScores[p.id]) || 0 }
       const { score } = calcHoleScore(grids[p.id])
       return { entityId: p.id, score }
     })
     onSave(scores)
   }
 
-  const allFilled = players.every(p => grids[p.id].every(v => v !== ''))
+  const allFilled = mode === 'grid'
+    ? players.every(p => grids[p.id].every(v => v !== ''))
+    : true
 
   return (
     <div className="round-entry">
-      <h3>Hole {holeNum} <span className="muted">of 9</span></h3>
-      <p className="muted" style={{ fontSize: '0.82rem' }}>Enter each player's 8 cards (top row then bottom row).</p>
+      <div className="step-header">
+        <h3>Hole {holeNum} <span className="muted">of 9</span></h3>
+        <div className="toggle-group" style={{ width: 'auto' }}>
+          <button className={mode === 'grid' ? 'toggle active' : 'toggle'} onClick={() => setMode('grid')}>
+            🃏 Cards
+          </button>
+          <button className={mode === 'free' ? 'toggle active' : 'toggle'} onClick={() => setMode('free')}>
+            ✏️ Score
+          </button>
+        </div>
+      </div>
+
+      {mode === 'free' && (
+        <>
+          <p className="muted" style={{ fontSize: '0.82rem' }}>Enter each player's hole score directly.</p>
+          {players.map(p => (
+            <div key={p.id} className="score-row">
+              <label>{p.name}</label>
+              <input
+                type="number"
+                inputMode="numeric"
+                value={freeScores[p.id]}
+                onChange={e => setFreeScores(s => ({ ...s, [p.id]: e.target.value }))}
+                placeholder="0"
+                style={{ width: 80 }}
+              />
+            </div>
+          ))}
+        </>
+      )}
+
+      {mode === 'grid' && (
+        <>
+          <p className="muted" style={{ fontSize: '0.82rem' }}>Enter each player's 8 cards (top row then bottom row).</p>
 
       {players.map(p => {
         const { score, breakdown } = calcHoleScore(grids[p.id])
@@ -149,6 +201,8 @@ export default function PlayNineRoundEntry({ game, onSave, onCancel }: Props) {
           </div>
         )
       })}
+        </>
+      )}
 
       <div className="round-actions">
         <button className="btn-primary" onClick={handleSave} disabled={!allFilled}>Save Hole</button>

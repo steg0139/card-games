@@ -69,7 +69,11 @@ export default function GamePlay() {
         !isSingleRound && (
           <div style={{ display: 'flex', gap: 8 }}>
             <button className="btn-primary" style={{ flex: 1 }} onClick={() => setEnteringRound(true)}>
-              + Enter Round {game.rounds.length + 1}
+              {game.config.id === 'play-nine'
+                ? `Play Hole ${game.rounds.length + 1}`
+                : game.config.id === 'mexican-train'
+                ? `Play ${((game.config.customRules as Record<string, number>)?.doubleSet ?? 9) - game.rounds.length}-${((game.config.customRules as Record<string, number>)?.doubleSet ?? 9) - game.rounds.length}`
+                : `+ Enter Round ${game.rounds.length + 1}`}
             </button>
             {game.rounds.length > 0 && (
               <button className="btn-ghost" onClick={undoRound} title="Undo last round">↩ Undo</button>

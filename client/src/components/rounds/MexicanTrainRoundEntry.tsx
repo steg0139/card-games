@@ -33,8 +33,8 @@ export default function MexicanTrainRoundEntry({ game, onSave, onCancel }: Props
   return (
     <div className="round-entry">
       <div className="step-header">
-        <h3>Round {roundNum} <span className="muted">of {totalRounds}</span></h3>
-        <span className="phase-badge">Starting double: {startingDouble}</span>
+        <h3>{startingDouble}-{startingDouble} <span className="muted">Round {roundNum} of {totalRounds}</span></h3>
+        <span className="phase-badge">Double {startingDouble}</span>
       </div>
       <p className="muted" style={{ fontSize: '0.82rem' }}>Enter pips remaining in each player's hand.</p>
       {players.map(p => (

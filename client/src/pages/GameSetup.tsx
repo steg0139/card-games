@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getGameConfig } from '@/games/configs'
 import { useGame } from '@/context/GameContext'
@@ -25,17 +25,18 @@ export default function GameSetup() {
 
   const [config, setConfig] = useState<GameConfig>(baseConfig ? getConfig(gameId!) : {} as GameConfig)
   const [playerMode, setPlayerMode] = useState<PlayerMode>('individual')
-  const [playerNames, setPlayerNames] = useState<LinkedPlayer[]>(() => [
-    user ? { name: user.username, linkedUserId: user.id } : { name: '' },
-    { name: '' }
+  const [playerNames, setPlayerNames] = useState<(LinkedPlayer & { _key: number })[]>(() => [
+    { _key: 0, ...(user ? { name: user.username, linkedUserId: user.id } : { name: '' }) },
+    { _key: 1, name: '' }
   ])
+  const nextKey = useRef(2)
   const [teamNames, setTeamNames] = useState<string[]>(['Team 1', 'Team 2'])
   const [teamAssignments, setTeamAssignments] = useState<Record<string, string>>({})
   const [showRules, setShowRules] = useState(false)
 
   if (!baseConfig) return <div className="page"><p>Game not found.</p></div>
 
-  const addPlayer = () => setPlayerNames(p => [...p, { name: '' }])
+  const addPlayer = () => setPlayerNames(p => [...p, { _key: nextKey.current++, name: '' }])
   const removePlayer = (i: number) => setPlayerNames(p => p.filter((_, idx) => idx !== i))
   const addTeam = () => setTeamNames(t => [...t, `Team ${t.length + 1}`])
   const removeTeam = (i: number) => setTeamNames(t => t.filter((_, idx) => idx !== i))
@@ -97,10 +98,10 @@ export default function GameSetup() {
       <section className="setup-section">
         <h3>Players</h3>
         {playerNames.map((player, i) => (
-          <div key={i} className="player-row">
+          <div key={player._key} className="player-row">
             <PlayerInput
               value={player}
-              onChange={p => setPlayerNames(arr => arr.map((n, idx) => idx === i ? p : n))}
+              onChange={p => setPlayerNames(arr => arr.map((n, idx) => idx === i ? { ...p, _key: n._key } : n))}
               placeholder={`Player ${i + 1}`}
             />
             {playerMode === 'teams' && (
