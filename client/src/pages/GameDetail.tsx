@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { useGame } from '@/context/GameContext'
 import type { Game } from '@/types'
 import AppHeader from '@/components/AppHeader'
 
 export default function GameDetail() {
   const { gameId } = useParams<{ gameId: string }>()
   const { user } = useAuth()
+  const { startGame } = useGame()
   const navigate = useNavigate()
   const [game, setGame] = useState<Game | null>(null)
   const [loading, setLoading] = useState(true)
@@ -118,6 +120,13 @@ export default function GameDetail() {
           </div>
         </section>
       )}
+
+      <button className="btn-primary full-width" onClick={() => {
+        startGame({ ...game, endedAt: undefined })
+        navigate('/game')
+      }}>
+        {game.endedAt ? 'Reopen Game' : 'Continue Game'}
+      </button>
     </div>
   )
 }
