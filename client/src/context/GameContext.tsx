@@ -73,33 +73,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const updated = { ...game, rounds: [...game.rounds, round], pendingBids: undefined }
     persist(updated)
 
-    if (user) {
-      fetch(`/api/games/${game.id}/rounds`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
-        body: JSON.stringify(round)
-      }).catch(console.error)
-    }
+    // Check if game should auto-end
+    let shouldAutoEnd = false
 
-    // Auto-end Mexican Train after all rounds
+    // Mexican Train: end after all rounds
     if (updated.config.id === 'mexican-train') {
       const doubleSet = (updated.config.customRules as Record<string, number>)?.doubleSet ?? 9
-      const totalRounds = doubleSet + 1
-      if (updated.rounds.length >= totalRounds) {
-        const ended = { ...updated, endedAt: Date.now() }
-        persist(ended)
-        if (user) {
-          fetch('/api/games', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
-            body: JSON.stringify(ended)
-          }).catch(console.error)
-        }
-        return ended
-      }
+      if (updated.rounds.length >= doubleSet + 1) shouldAutoEnd = true
     }
 
-    // Auto-end if a target score has been reached
+    // Target score reached
     const target = updated.config.targetScore
       ?? (updated.config.customRules as Record<string, unknown>)?.targetScore as number | undefined
     if (target) {
@@ -110,18 +93,30 @@ export function GameProvider({ children }: { children: ReactNode }) {
           return sum + (s?.score ?? 0)
         }, 0) >= target
       )
-      if (reached) {
-        const ended = { ...updated, endedAt: Date.now() }
-        persist(ended)
-        if (user) {
-          fetch('/api/games', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
-            body: JSON.stringify(ended)
-          }).catch(console.error)
-        }
-        return ended
+      if (reached) shouldAutoEnd = true
+    }
+
+    if (shouldAutoEnd) {
+      const ended = { ...updated, endedAt: Date.now() }
+      persist(ended)
+      if (user) {
+        // Save the full ended game in one shot — no separate round sync needed
+        fetch('/api/games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+          body: JSON.stringify(ended)
+        }).catch(console.error)
       }
+      return ended
+    }
+
+    // Only sync the individual round if we didn't auto-end
+    if (user) {
+      fetch(`/api/games/${game.id}/rounds`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        body: JSON.stringify(round)
+      }).catch(console.error)
     }
 
     return updated
