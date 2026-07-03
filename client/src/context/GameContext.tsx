@@ -26,6 +26,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
     if (stored) setGame(JSON.parse(stored))
   }, [])
 
+  // Sync ended game to server if it was saved locally but not synced (e.g. user was null at end time)
+  useEffect(() => {
+    if (!user || !game) return
+    if (game.endedAt) {
+      fetch('/api/games', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` },
+        body: JSON.stringify(game)
+      }).catch(console.error)
+    }
+  }, [user])
+
   const persist = (g: Game | null) => {
     setGame(g)
     if (g) localStorage.setItem(LOCAL_KEY, JSON.stringify(g))

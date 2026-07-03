@@ -263,6 +263,9 @@ export default function Settings() {
           <button className="btn-ghost" onClick={() => setAuthMode(m => m === 'login' ? 'register' : 'login')}>
             {authMode === 'login' ? 'Need an account? Register' : 'Already have an account? Sign in'}
           </button>
+          {authMode === 'login' && (
+            <button className="btn-ghost" onClick={() => navigate('/forgot-password')}>Forgot password?</button>
+          )}
         </section>
       ) : (
         <>
@@ -300,8 +303,57 @@ export default function Settings() {
 
           {accountMsg && <p className="muted" style={{ textAlign: 'center' }}>{accountMsg}</p>}
           {accountError && <p className="error" style={{ textAlign: 'center' }}>{accountError}</p>}
+
+          <SecurityQuestionSection token={user.token} />
         </>
       )}
     </div>
+  )
+}
+
+function SecurityQuestionSection({ token }: { token: string }) {
+  const [question, setQuestion] = useState('')
+  const [answer, setAnswer] = useState('')
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(''); setSaved(false)
+    try {
+      const res = await fetch('/api/auth/security-question', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ question, answer })
+      })
+      if (!res.ok) throw new Error((await res.json()).error)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save')
+    }
+  }
+
+  return (
+    <section className="setup-section">
+      <h3>Security Question</h3>
+      <p className="muted" style={{ fontSize: '0.82rem' }}>Set a security question to reset your password if you forget it.</p>
+      <form onSubmit={handleSave} className="form">
+        <label>
+          Question
+          <input type="text" value={question} onChange={e => setQuestion(e.target.value)}
+            placeholder="e.g. What is your pet's name?" required />
+        </label>
+        <label>
+          Answer
+          <input type="text" value={answer} onChange={e => setAnswer(e.target.value)}
+            placeholder="Your answer" required />
+        </label>
+        {error && <p className="error">{error}</p>}
+        <button className="btn-primary" type="submit" disabled={!question.trim() || !answer.trim()}>
+          {saved ? '✓ Saved!' : 'Save Security Question'}
+        </button>
+      </form>
+    </section>
   )
 }

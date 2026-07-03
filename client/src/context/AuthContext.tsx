@@ -3,6 +3,7 @@ import type { AuthUser } from '@/types'
 
 interface AuthContextType {
   user: AuthUser | null
+  loaded: boolean
   login: (username: string, password: string) => Promise<void>
   register: (username: string, password: string) => Promise<void>
   logout: () => void
@@ -12,10 +13,12 @@ const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem('auth_user')
     if (stored) setUser(JSON.parse(stored))
+    setLoaded(true)
   }, [])
 
   const login = async (username: string, password: string) => {
@@ -47,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('auth_user')
   }
 
-  return <AuthContext.Provider value={{ user, login, register, logout }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, loaded, login, register, logout }}>{children}</AuthContext.Provider>
 }
 
 export const useAuth = () => {

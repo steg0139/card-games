@@ -50,7 +50,7 @@ export default function History() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    if (!user) { navigate('/auth'); return }
+    if (!user) return
     fetch('/api/games', {
       headers: { Authorization: `Bearer ${user.token}` }
     })
@@ -58,7 +58,7 @@ export default function History() {
       .then(setGames)
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [user, navigate])
+  }, [user])
 
   const filtered = search.trim()
     ? games.filter(g => {

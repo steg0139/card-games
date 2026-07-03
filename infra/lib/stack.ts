@@ -65,6 +65,7 @@ export class CardScoreTrackerStack extends cdk.Stack {
         VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY ?? '',
         VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY ?? '',
         VAPID_EMAIL: process.env.VAPID_EMAIL ?? 'mailto:admin@example.com',
+        ADMIN_USER_ID: process.env.ADMIN_USER_ID ?? '',
       },
       timeout: cdk.Duration.seconds(30),
       memorySize: 256

@@ -11,6 +11,7 @@ import LogPastGame from '@/pages/LogPastGame'
 import WatchGame from '@/pages/WatchGame'
 
 import Settings from '@/pages/Settings'
+import ForgotPassword from '@/pages/ForgotPassword'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
       <Route path="/log-past" element={<LogPastGame />} />
       <Route path="/watch/:gameId" element={<WatchGame />} />
       <Route path="/settings" element={<Settings />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   )
 }
