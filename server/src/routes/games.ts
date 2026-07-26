@@ -74,7 +74,13 @@ router.post('/', async (req: AuthRequest, res) => {
   const game = req.body
   await ddb.send(new PutCommand({
     TableName: GAMES_TABLE,
-    Item: { id: game.id, userId: req.userId, data: JSON.stringify(game), startedAt: game.startedAt }
+    Item: {
+      id: game.id,
+      userId: req.userId,
+      data: JSON.stringify(game),
+      startedAt: game.startedAt,
+      ...(game.endedAt ? { endedAt: game.endedAt } : {})
+    }
   }))
   res.json({ ok: true })
 })
