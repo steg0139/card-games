@@ -50,6 +50,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('auth_user')
   }
 
+  // Global 401 detection — auto-logout on expired tokens
+  useEffect(() => {
+    const originalFetch = window.fetch
+    window.fetch = async (...args) => {
+      const res = await originalFetch(...args)
+      if (res.status === 401 && user) {
+        const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request).url
+        // Only auto-logout for our API calls, not login/register attempts
+        if (url.includes('/api/') && !url.includes('/api/auth/login') && !url.includes('/api/auth/register')) {
+          logout()
+        }
+      }
+      return res
+    }
+    return () => { window.fetch = originalFetch }
+  }, [user])
+
   return <AuthContext.Provider value={{ user, loaded, login, register, logout }}>{children}</AuthContext.Provider>
 }
 
